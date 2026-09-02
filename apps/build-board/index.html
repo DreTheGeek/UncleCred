@@ -70,7 +70,7 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
  "updated":"2026-09-02",
  "phases":[
   {"n":"01","name":"Spine","status":"active","gate":"Live login, MCP answering from Claude, one Trigger.dev round trip, R2 write",
-   "tasks":[["now","New Supabase project on the 7 schema split, RLS everywhere"],["","Port dre_media, dre_intelligence, dre_knowledge, dre_system"],["","api_keys, /api/v1, remote MCP (reuse kaldr-mcp OAuth)"],["","system_events ledger, ai_budget gate, Langfuse"],["","Trigger.dev project, hello task"],["","Railway worker image: FFmpeg + Remotion"],["","R2 bucket wired"]]},
+   "tasks":[["ok","Migrations written: 8 schemas, 146 ported tables, 37 functions, 38 triggers, RLS on all"],["now","Apply migrations to pdficpdfrituqjzaleen (blocked: project not reachable from Composio yet)"],["ok","system_events ledger, api_keys + validate_api_key, ai_cost_ledger, ai_models registry (written)"],["ok","api-v1 edge function: health, whoami, events (written, not deployed)"],["","Remote MCP port from kaldr-mcp"],["ok","Worker image: FFmpeg + Chromium, Railway config (written)"],["ok","Trigger.dev hello task + R2 client (written)"],["","Trigger.dev project created + hello run green (needs account)"],["","R2 bucket created + proof object written (needs account)"],["","Vercel deploy + live login"]]},
   {"n":"02","name":"Canon and characters","status":"todo","gate":"Five characters with locked turnarounds, expression sheets, LoRA v1, voice_id. Benchmark scenes A to E scored",
    "tasks":[["","canon tables + admin (kb-design first, Boss plates)"],["","Character bibles: Uncle Cred, Auntie APR, Repo Reggie, Mr. Denied, Funding Frank"],["","GenerationRouter + ai_models registry"],["","LoRA pipeline on fal (FLUX.1)"],["","ElevenLabs voice_id per character"],["","Benchmark lab"]]},
   {"n":"03","name":"Showrunner and grounding","status":"todo","gate":"One episode blueprint generated, every claim verified, blocklist proven by test",
@@ -83,10 +83,10 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
    "tasks":[["","Chaos harness"],["","Self healing workflow"],["","Cost per episode, ROI per character"],["","Legal sign off: CROA, FTC, state CSO"]]}
  ],
  "keys":[
-  ["Supabase (new project)","01","Database, auth, storage, edge functions","have"],
+  ["Supabase (new project)","01","Created. Not reachable from Composio: connect its org or run db push in Claude Code","need"],
   ["Anthropic","01","Every model call routes here","have"],
-  ["Trigger.dev","01","Durable workflows. Free tier","need"],
-  ["Cloudflare R2","01","Published video, 0 egress","need"],
+  ["Trigger.dev","01","Durable workflows. Free tier. BLOCKING the gate","need"],
+  ["Cloudflare R2","01","Published video, 0 egress. BLOCKING the gate","need"],
   ["Vercel","01","Command center deploy","have"],
   ["Railway","01","FFmpeg + Remotion workers","have"],
   ["GitHub","01","Repo, CI","have"],
@@ -105,7 +105,8 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
   ["Sentry","04","App errors, self healing seed","opt"]
  ],
  "log":[
-  ["2026-09-02","Repo created. Planning spine committed. Supabase project pdficpdfrituqjzaleen assigned."]
+  ["2026-09-02","Repo created. Planning spine committed. Supabase project pdficpdfrituqjzaleen assigned."],
+  ["2026-09-02","Phase 01 code complete: migrations ported from LaSeanPickens dre_* into the split, api-v1, worker image, Trigger hello task, R2 client. Waiting on: DB access, Trigger.dev, R2."]
  ]
 }
 </script>
