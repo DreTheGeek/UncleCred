@@ -70,7 +70,7 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
  "updated":"2026-09-02",
  "phases":[
   {"n":"01","name":"Spine","status":"active","gate":"Live login, MCP answering from Claude, one Trigger.dev round trip, R2 write",
-   "tasks":[["ok","Migrations written: 8 schemas, 146 ported tables, 37 functions, 38 triggers, RLS on all"],["ok","Migrations applied to pdficpdfrituqjzaleen: 151 tables, 39 functions, 38 triggers, RLS on all, queues created"],["ok","system_events ledger live (event 1 written), api_keys + validate_api_key proven, ai_cost_ledger, ai_models registry"],["ok","api-v1 deployed live: health 200, key auth 200, revoked key 401, events read 200"],["","Remote MCP port from kaldr-mcp"],["ok","Worker image: FFmpeg + Chromium, Railway config (written)"],["ok","Trigger.dev hello task + R2 client (written)"],["now","Trigger.dev project created + hello run green (needs account)"],["","R2 bucket created + proof object written (needs account)"],["","Vercel deploy + live login"]]},
+   "tasks":[["ok","Migrations written: 8 schemas, 146 ported tables, 37 functions, 38 triggers, RLS on all"],["ok","Migrations applied to pdficpdfrituqjzaleen: 151 tables, 39 functions, 38 triggers, RLS on all, queues created"],["ok","system_events ledger live (event 1 written), api_keys + validate_api_key proven, ai_cost_ledger, ai_models registry"],["ok","api-v1 deployed live: health 200, key auth 200, revoked key 401, events read 200"],["","Remote MCP port from kaldr-mcp"],["ok","Boss ruling: Supabase only. Trigger.dev, Railway, R2, Remotion removed"],["now","pg_cron jobs registered + one edge worker claims and completes a pipeline_stage"],["","Storage buckets created + proof object written"],["","Owner RLS policies for authenticated users"],["","Vercel deploy + live login"]]},
   {"n":"02","name":"Canon and characters","status":"todo","gate":"Five characters with locked turnarounds, expression sheets, LoRA v1, voice_id. Benchmark scenes A to E scored",
    "tasks":[["","canon tables + admin (kb-design first, Boss plates)"],["","Character bibles: Uncle Cred, Auntie APR, Repo Reggie, Mr. Denied, Funding Frank"],["","GenerationRouter + ai_models registry"],["","LoRA pipeline on fal (FLUX.1)"],["","ElevenLabs voice_id per character"],["","Benchmark lab"]]},
   {"n":"03","name":"Showrunner and grounding","status":"todo","gate":"One episode blueprint generated, every claim verified, blocklist proven by test",
@@ -85,10 +85,7 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
  "keys":[
   ["Supabase (new project)","01","pdficpdfrituqjzaleen, migrated and live","have"],
   ["Anthropic","01","Every model call routes here","have"],
-  ["Trigger.dev","01","Durable workflows. Free tier. BLOCKING the gate","need"],
-  ["Cloudflare R2","01","Published video, 0 egress. BLOCKING the gate","need"],
   ["Vercel","01","Command center deploy","have"],
-  ["Railway","01","FFmpeg + Remotion workers","have"],
   ["GitHub","01","Repo, CI","have"],
   ["fal.ai","02","Primary image, video, LoRA gateway","later"],
   ["ElevenLabs Creator","02","Voice identities, commercial license","later"],
@@ -98,7 +95,7 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
   ["Runway","02","Fallback for reference video","opt"],
   ["HeyGen","02","Fallback talking head","opt"],
   ["OpenAI / OpenRouter","03","Only if a non Anthropic model wins a benchmark","opt"],
-  ["Remotion Automators","04","Required once renders are automated","later"],
+  ["Render API (Creatomate or Shotstack)","04","Templated overlays, captions, intro and outro, bought per render","later"],
   ["Blotato API key","05","Publishing v1, already subscribed","have"],
   ["YouTube / Meta apps","05","Native analytics beyond Blotato","later"],
   ["Telegram bot","04","Ops alerts","opt"],
@@ -106,6 +103,7 @@ footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var
  ],
  "log":[
   ["2026-09-02","Repo created. Planning spine committed. Supabase project pdficpdfrituqjzaleen assigned."],
+  ["2026-09-02","Boss ruling: Supabase only. Trigger.dev, Railway, R2, Remotion dropped. Uncle Cred voice id locked in canon."],
   ["2026-09-02","Supabase connected. Migrations applied, api-v1 deployed and proven with a minted key, org and universe seeded, first ledger event written. Remaining: Trigger.dev, R2, Railway, Vercel."],
   ["2026-09-02","Phase 01 code complete: migrations ported from LaSeanPickens dre_* into the split, api-v1, worker image, Trigger hello task, R2 client. Waiting on: DB access, Trigger.dev, R2."]
  ]

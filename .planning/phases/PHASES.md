@@ -6,8 +6,8 @@ Order never changes. Every phase ends with VERIFICATION.md evidence, doctrine-ci
 - New Supabase project, 7 schema split: platform, canon, studio, production, publishing, intelligence, knowledge, system. RLS on every table including vectors.
 - Port dre_media, dre_intelligence, dre_knowledge, dre_system into the split. Migrations written fresh; laseanpickens migrations are the reference.
 - api_keys, /api/v1, remote MCP (reuse kaldr-mcp OAuth), system_events ledger, ai_budget gate, Langfuse wired.
-- Trigger.dev project created, hello task deployed, Railway worker image with FFmpeg and Remotion.
-- Gate: login on a live URL, MCP answering from Claude, one Trigger.dev task round trip, R2 bucket writing.
+- pg_cron jobs registered for autonomy_sweep, pipeline_advance, recovery, embedding queue. One edge function worker claims a pipeline_stage and completes it.
+- Gate: login on a live URL, MCP answering from Claude, one pipeline_stage claimed and completed by an edge function on cron, one object written to Supabase Storage.
 
 ## 02 Canon and characters
 - packages/canon tables and admin screens (kb-design loaded first, Boss frames as plates).
@@ -24,9 +24,9 @@ Order never changes. Every phase ends with VERIFICATION.md evidence, doctrine-ci
 - Gate: one Uncle Cred episode blueprint generated, every claim verified or rewritten, blocklist proven by test.
 
 ## 04 Production line
-- Trigger.dev workflow: blueprint to shots to generation to QA to repair to assembly to episode QA to READY FOR LASEAN.
+- Pipeline stages: blueprint to shots to generation to QA to repair to assembly to episode QA to READY FOR LASEAN, each a pipeline_stage row advanced by cron and edge workers.
 - Media QA gate with scorecards, repair router, retry budget 4.
-- Remotion compositions: captions from word level Whisper, lower thirds, intro, outro, CTA with {PRODUCT_NAME} token, credit graphics.
+- Render API templates: captions from word level Whisper, lower thirds, intro, outro, CTA with {PRODUCT_NAME} token, credit graphics.
 - Packaging engine: master to TikTok, Reels, Shorts, Facebook, LinkedIn variants with per platform caption, hook, CTA, safe zones.
 - Gate: one full episode rendered end to end without a human touching a vendor dashboard, QA scorecards persisted for every shot.
 
