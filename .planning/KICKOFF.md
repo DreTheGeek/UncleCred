@@ -15,3 +15,5 @@ Session 1 = Phase 01 Spine. Start with the STATE CHECK, write .planning/DISCOVER
 Laws: JSON schemas on every AI output (Zod). No vendor call outside the GenerationRouter. No API key in code, prompts, or DB. Every destructive route uses confirm-destructive. Zero em dashes. Env names in .env.example only.
 
 End of every session: update the STATE JSON block in apps/build-board/index.html (task flags ok/now, phase status, one log line) and commit it with the session's work.
+
+Added 2026-09-02: read .planning/ONBOARDING.md and .planning/STORY-BIBLE.md before any UI or showrunner work. Phase 01 gains one item: deploy the embed worker (port laseanpickens dre-embed-worker and process-embedding-queue) so the 7,424 queued credit chunks get embedded; verify count(embedding) = count(*).

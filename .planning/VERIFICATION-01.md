@@ -29,3 +29,9 @@ Evidence, not claims. Project pdficpdfrituqjzaleen (Supabase, us-west-2, Postgre
 - 0000 gained citext, pg_trgm, schema grants, and pgmq queue creation after the first apply failed on citext and service_role lacked privileges on the new schemas.
 - system.health_summary view moved to needs_review: it reads dre_api.api_clients which is cortex, not studio.
 - api-v1 is deployed as a single self contained file (Composio deploy takes one file). Source of truth stays modular in the repo; sync before redeploy.
+
+## Knowledge base (2026-09-02, later the same day)
+- Imported from The Credit Brothers (ref avxyibhhcgbiutggxilr, ops.tcb_kb_*): 167 documents, 7,424 chunks across credit-fundamentals, credit-repair-diy, dispute-rounds, credit-cards-strategy, personal-funding, business-funding, case-monitoring-legal. Both layers kept (source and lesson; lesson chunk_index offset by 100000). Provenance in metadata.source_project.
+- Trigger knowledge.enqueue_chunk_embedding fired: pgmq dre_embeddings depth 7,724. Embeddings are 0 of 7,424 until the embed worker edge function is deployed with an embedding key (Claude Code Phase 01 step, add it).
+- Not imported yet: 1,728 untopic'd raw source docs (6,210 chunks, mixed subjects), 15 SOPs, the 8 non credit topics (travel, bank bonuses, team ops). BigBuildsAi corpus (13 kb_* pairs) left in place; the kb skills already in kaldr-core cover the same ground.
+- Ledger: system_events knowledge.imported.
