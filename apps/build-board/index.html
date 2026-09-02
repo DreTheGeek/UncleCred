@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FDS Build Board</title>
+<style>
+:root{--blue:#2563EB;--ink:#0D0D0D;--deep:#05060A;--slate:#AEB8CC;--white:#FFFFFF;--line:rgba(174,184,204,.14);--ok:#22C55E;--warn:#F59E0B;--bad:#EF4444;--mute:rgba(174,184,204,.55)}
+*{box-sizing:border-box}html{background:var(--deep);color:var(--white);font:16px/1.45 "IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
+body{margin:0;padding:clamp(16px,3vw,40px)}
+h1,h2,h3{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:-.02em;margin:0}
+a{color:var(--blue)}
+header{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+header h1{font-size:clamp(28px,5vw,64px);line-height:.95}
+header .k{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.14em}
+.stamp{font-family:"IBM Plex Mono",monospace;text-align:right;color:var(--slate);font-size:13px}
+.stamp b{display:block;color:var(--white);font-size:clamp(20px,3vw,34px)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.card{background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--slate);padding:18px 18px 14px;position:relative}
+.card.done{border-left-color:var(--ok)}.card.active{border-left-color:var(--blue);box-shadow:0 0 0 1px rgba(37,99,235,.35),0 20px 60px -30px rgba(37,99,235,.6)}
+.card.blocked{border-left-color:var(--bad)}
+.num{font-family:"IBM Plex Mono",monospace;font-size:44px;line-height:1;color:var(--mute);position:absolute;right:14px;top:10px}
+.card h2{font-size:20px;margin:0 0 6px;padding-right:70px}
+.status{font-family:"IBM Plex Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.14em;display:inline-block;padding:3px 8px;border:1px solid var(--line);margin-bottom:12px}
+.done .status{color:var(--ok);border-color:rgba(34,197,94,.4)}.active .status{color:var(--blue);border-color:rgba(37,99,235,.5)}.blocked .status{color:var(--bad)}
+ul{margin:0;padding:0;list-style:none}
+.task{display:flex;gap:10px;padding:6px 0;border-top:1px dashed var(--line);font-size:14px;color:var(--slate)}
+.task i{flex:none;width:14px;height:14px;border:1px solid var(--slate);margin-top:3px;font-style:normal}
+.task.ok i{background:var(--ok);border-color:var(--ok)}.task.ok{color:var(--white)}
+.task.now i{border-color:var(--blue);box-shadow:inset 0 0 0 3px var(--ink),inset 0 0 0 7px var(--blue)}
+.gate{margin-top:12px;padding:10px 12px;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.3);font-size:13px}
+.gate b{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);display:block;margin-bottom:4px}
+section{margin-top:36px}
+section h3{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:500}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border:1px solid var(--line);white-space:nowrap}
+.pill.need{color:var(--bad);border-color:rgba(239,68,68,.5)}.pill.later{color:var(--warn);border-color:rgba(245,158,11,.5)}.pill.opt{color:var(--mute)}.pill.have{color:var(--ok);border-color:rgba(34,197,94,.5)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--slate);margin-top:10px}
+.mono{font-family:"IBM Plex Mono",monospace}
+.log{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--slate)}
+.log li{padding:6px 0;border-top:1px dashed var(--line)}
+.log time{color:var(--white);margin-right:10px}
+footer{margin-top:40px;color:var(--mute);font-size:12px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:640px){header{grid-template-columns:1fr}.stamp{text-align:left}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="k">Financial District Studios / Kaldr Business Group</div>
+    <h1>BUILD BOARD</h1>
+  </div>
+  <div class="stamp">Supabase <span class="mono">pdficpdfrituqjzaleen</span><br>Repo DreTheGeek/financial-district-studios<b id="pct">0 / 6 phases</b></div>
+</header>
+<div class="grid" id="phases"></div>
+<section>
+  <h3>Keys and accounts, by the phase that first needs them</h3>
+  <table id="keys"><thead><tr><th>Service</th><th>First needed</th><th>Why</th><th>Status</th></tr></thead><tbody></tbody></table>
+  <div class="legend"><span class="pill need">NEED</span> blocks the next gate <span class="pill later">LATER</span> needed by a later phase <span class="pill opt">OPTIONAL</span> nice to have, skip until it hurts <span class="pill have">HAVE</span> already connected</div>
+</section>
+<section>
+  <h3>Session log (Claude Code appends one line per session)</h3>
+  <ul class="log" id="log"></ul>
+</section>
+<footer>This board lives at apps/build-board/index.html. Every Claude Code session ends by updating the STATE block and committing. No backend needed.</footer>
+<script id="state" type="application/json">
+{
+ "updated":"2026-09-02",
+ "phases":[
+  {"n":"01","name":"Spine","status":"active","gate":"Live login, MCP answering from Claude, one Trigger.dev round trip, R2 write",
+   "tasks":[["now","New Supabase project on the 7 schema split, RLS everywhere"],["","Port dre_media, dre_intelligence, dre_knowledge, dre_system"],["","api_keys, /api/v1, remote MCP (reuse kaldr-mcp OAuth)"],["","system_events ledger, ai_budget gate, Langfuse"],["","Trigger.dev project, hello task"],["","Railway worker image: FFmpeg + Remotion"],["","R2 bucket wired"]]},
+  {"n":"02","name":"Canon and characters","status":"todo","gate":"Five characters with locked turnarounds, expression sheets, LoRA v1, voice_id. Benchmark scenes A to E scored",
+   "tasks":[["","canon tables + admin (kb-design first, Boss plates)"],["","Character bibles: Uncle Cred, Auntie APR, Repo Reggie, Mr. Denied, Funding Frank"],["","GenerationRouter + ai_models registry"],["","LoRA pipeline on fal (FLUX.1)"],["","ElevenLabs voice_id per character"],["","Benchmark lab"]]},
+  {"n":"03","name":"Showrunner and grounding","status":"todo","gate":"One episode blueprint generated, every claim verified, blocklist proven by test",
+   "tasks":[["","Port planner + gates from kaldr-content-api"],["","Claim extraction, authority retrieval, verify loop"],["","Compliance blocklist + disclosure injector"],["","Writers room JSON only (Zod)"]]},
+  {"n":"04","name":"Production line","status":"todo","gate":"One full episode rendered end to end, QA scorecards on every shot, no vendor dashboard touched",
+   "tasks":[["","Trigger.dev workflow: blueprint to READY FOR LASEAN"],["","Media QA gate + repair router, retry budget 4"],["","Remotion comps: captions, lower thirds, intro, outro, CTA"],["","Packaging engine per platform"]]},
+  {"n":"05","name":"Publish and learn","status":"todo","gate":"First episode live on five platforms with disclosure, metrics landing, one learning row",
+   "tasks":[["","Blotato adapter + publishing_jobs"],["","Analytics pullback + CSV import"],["","Learning loop + experiments"]]},
+  {"n":"06","name":"Proof and hardening","status":"todo","gate":"Operator reality audit passed, chaos run clean, lawyer sign off, auto approve threshold earned",
+   "tasks":[["","Chaos harness"],["","Self healing workflow"],["","Cost per episode, ROI per character"],["","Legal sign off: CROA, FTC, state CSO"]]}
+ ],
+ "keys":[
+  ["Supabase (new project)","01","Database, auth, storage, edge functions","have"],
+  ["Anthropic","01","Every model call routes here","have"],
+  ["Trigger.dev","01","Durable workflows. Free tier","need"],
+  ["Cloudflare R2","01","Published video, 0 egress","need"],
+  ["Vercel","01","Command center deploy","have"],
+  ["Railway","01","FFmpeg + Remotion workers","have"],
+  ["GitHub","01","Repo, CI","have"],
+  ["fal.ai","02","Primary image, video, LoRA gateway","later"],
+  ["ElevenLabs Creator","02","Voice identities, commercial license","later"],
+  ["Hedra Creator","02","Talking heads for cartoon faces","later"],
+  ["Langfuse (self host)","01","LLM traces and cost. Can start on Cloud free","opt"],
+  ["Replicate","02","Secondary models, utility ML","opt"],
+  ["Runway","02","Fallback for reference video","opt"],
+  ["HeyGen","02","Fallback talking head","opt"],
+  ["OpenAI / OpenRouter","03","Only if a non Anthropic model wins a benchmark","opt"],
+  ["Remotion Automators","04","Required once renders are automated","later"],
+  ["Blotato API key","05","Publishing v1, already subscribed","have"],
+  ["YouTube / Meta apps","05","Native analytics beyond Blotato","later"],
+  ["Telegram bot","04","Ops alerts","opt"],
+  ["Sentry","04","App errors, self healing seed","opt"]
+ ],
+ "log":[
+  ["2026-09-02","Repo created. Planning spine committed. Supabase project pdficpdfrituqjzaleen assigned."]
+ ]
+}
+</script>
+<script>
+const S=JSON.parse(document.getElementById('state').textContent);
+const ph=document.getElementById('phases');
+S.phases.forEach(p=>{
+ const d=document.createElement('div');d.className='card '+p.status;
+ d.innerHTML=`<div class="num">${p.n}</div><h2>${p.name}</h2><span class="status">${p.status==='done'?'gate cleared':p.status==='active'?'in progress':p.status==='blocked'?'blocked':'queued'}</span>
+ <ul>${p.tasks.map(t=>`<li class="task ${t[0]}"><i></i><span>${t[1]}</span></li>`).join('')}</ul>
+ <div class="gate"><b>Gate</b>${p.gate}</div>`;
+ ph.appendChild(d);
+});
+document.getElementById('pct').textContent=S.phases.filter(p=>p.status==='done').length+' / 6 phases';
+const tb=document.querySelector('#keys tbody');
+const lab={need:'NEED',later:'LATER',opt:'OPTIONAL',have:'HAVE'};
+S.keys.forEach(k=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${k[0]}</td><td class="mono">${k[1]}</td><td>${k[2]}</td><td><span class="pill ${k[3]}">${lab[k[3]]}</span></td>`;tb.appendChild(tr)});
+const lg=document.getElementById('log');
+S.log.slice().reverse().forEach(l=>{const li=document.createElement('li');li.innerHTML=`<time>${l[0]}</time>${l[1]}`;lg.appendChild(li)});
+</script>
+</body>
+</html>

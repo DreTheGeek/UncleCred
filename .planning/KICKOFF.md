@@ -13,3 +13,5 @@ Sources you can read directly: DreTheGeek/laseanpickens (the DRE content engine)
 Session 1 = Phase 01 Spine. Start with the STATE CHECK, write .planning/DISCOVERY.md from DECISIONS.md, then execute Phase 01 to its gate. Stop at the gate and report VERIFICATION.md evidence, not claims.
 
 Laws: JSON schemas on every AI output (Zod). No vendor call outside the GenerationRouter. No API key in code, prompts, or DB. Every destructive route uses confirm-destructive. Zero em dashes. Env names in .env.example only.
+
+End of every session: update the STATE JSON block in apps/build-board/index.html (task flags ok/now, phase status, one log line) and commit it with the session's work.

@@ -22,5 +22,9 @@ See DECISIONS.md. Nothing there is reopened without Boss saying so.
 - InsightFace buffalo model license is non commercial. QA gate needs a commercially licensed embedding or LoRA anchored CLIP/DINOv2 as identity metric.
 - Credit Buddy (partner brand) could not be verified publicly. Boss has first hand knowledge.
 
+## Infrastructure
+- Supabase project: pdficpdfrituqjzaleen (https://pdficpdfrituqjzaleen.supabase.co). Studio database. Not the LaSeanPickens project.
+- Build board: apps/build-board/index.html. Updated at the end of every session.
+
 ## Sessions log
 - 2026-09-02 chat: repo created, planning spine committed.
