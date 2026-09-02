@@ -1,0 +1,11 @@
+project_id = "pdficpdfrituqjzaleen"
+
+[api]
+schemas = ["public", "platform", "studio", "production", "publishing", "intelligence", "research", "knowledge", "system"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+major_version = 17
+
+[functions.api-v1]
+verify_jwt = false

@@ -1,0 +1,1 @@
+-- These reference schemas not ported (dre_api, dre_ops, dre_app, dre_audit, public.lp_*). Fix references before applying.
