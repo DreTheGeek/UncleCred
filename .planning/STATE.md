@@ -27,6 +27,7 @@ See DECISIONS.md. Nothing there is reopened without Boss saying so.
 - Build board: apps/build-board/index.html. Updated at the end of every session.
 
 ## Sessions log
+- 2026-09-02 chat: cast seeded (5 characters with canon, prohibited changes, relationships), ai_models seeded (16 rows), BENCHMARK-LAB.md written. Composio Vercel token invalid; Boss doing DNS by hand.
 - 2026-09-02 chat: credit KB imported from Credit Brothers (167 docs, 7,424 chunks), embeddings queued. ONBOARDING.md and STORY-BIBLE.md written.
 - 2026-09-02 chat: Boss ruling Supabase only. Dropped Trigger.dev, Railway, R2, Remotion. Uncle Cred voice locked.
 - 2026-09-02 chat: Supabase org connected. Migrations applied live, api-v1 deployed and proven, seed rows written. See VERIFICATION-01.md.
