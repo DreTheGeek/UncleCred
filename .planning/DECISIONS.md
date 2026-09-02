@@ -32,3 +32,12 @@ Source for each: R = Step 0 research, B = Boss default accepted, S = standard de
 ## Naming and domain (Boss, 2026-09-02)
 - Display name is two words: Uncle Cred. Everywhere a human reads it. The repo slug and code identifiers stay UncleCred / unclecred.
 - Command center lives at content.unclecred.app (Vercel project apps/studio, CNAME at GoDaddy). Add the domain in the Phase 01 Claude Code session.
+
+## The click law (Boss, 2026-09-02)
+Boss's whole job in this software is click, click, click, output. Nothing he touches asks him to think about the pipeline.
+- Daily driver is the Review Room. Three actions per episode, one tap each: Approve, Send back, Kill. Approve schedules and publishes with no second screen.
+- Every "needs you" item is a one tap decision with a default already picked: pick A or B, approve the inpaint, confirm the wardrobe. Never a form.
+- Character intake is a picker, not a form: the studio generates candidates, Boss taps the one he likes, the rest is automatic.
+- The command center never asks for input. It reports and offers one primary button.
+- Any screen that needs more than three taps to produce an output fails the operator reality audit and gets redesigned.
+- Home screen is Review Room when anything is waiting on Boss, Command Center otherwise.
