@@ -27,5 +27,6 @@ See DECISIONS.md. Nothing there is reopened without Boss saying so.
 - Build board: apps/build-board/index.html. Updated at the end of every session.
 
 ## Sessions log
+- 2026-09-02 chat: Supabase org connected. Migrations applied live, api-v1 deployed and proven, seed rows written. See VERIFICATION-01.md.
 - 2026-09-02 chat: repo created, planning spine committed.
 - 2026-09-02 chat: Phase 01 code written and committed (migrations, api-v1, worker, trigger task, r2). Not applied: studio Supabase project is not visible to any connected Composio Supabase account. Trigger.dev and R2 accounts not created yet.
