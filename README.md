@@ -1,6 +1,6 @@
-# Financial District Studios
+# UncleCred
 
-Autonomous AI animated studio. First universe: Uncle Cred. Owner: Kaldr Business Group LLC.
+Autonomous AI animated studio. The Uncle Cred universe: Uncle Cred, Auntie APR, Repo Reggie, Mr. Denied, Funding Frank. Owner: Kaldr Business Group LLC.
 
 Built under kaldr-build-system v6.4. Spine and organs come from DreTheGeek/kaldr-core and DreTheGeek/laseanpickens (the DRE content engine). See .planning/HARVEST-MAP.md for what gets pulled from where and .planning/KICKOFF.md to start the build in Claude Code.
 

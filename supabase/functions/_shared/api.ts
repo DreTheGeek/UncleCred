@@ -14,7 +14,7 @@ export const fail = (code: string, message: string, status = 400) =>
 export async function validateApiKey(req: Request): Promise<Principal | null> {
   const auth = req.headers.get("authorization") ?? "";
   const raw = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
-  if (!raw.startsWith("fds_")) return null;
+  if (!raw.startsWith("uc_")) return null;
   const { data, error } = await admin().rpc("validate_api_key", { p_raw: raw }).schema("system");
   if (error || !data || data.length === 0) return null;
   const row = data[0];

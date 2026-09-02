@@ -2,7 +2,7 @@
 import { ok, fail, principalFrom, admin } from "../_shared/api.ts";
 
 const routes: Record<string, (req: Request, p: Awaited<ReturnType<typeof principalFrom>>) => Promise<Response>> = {
-  "GET /health": async () => ok({ service: "financial-district-studios", time: new Date().toISOString() }),
+  "GET /health": async () => ok({ service: "UncleCred", time: new Date().toISOString() }),
   "GET /whoami": async (_req, p) => (p ? ok(p) : fail("unauthorized", "Bearer key or session required", 401)),
   "GET /events": async (req, p) => {
     if (!p) return fail("unauthorized", "Bearer key or session required", 401);

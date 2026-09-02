@@ -1,4 +1,4 @@
-# HARVEST MAP: what FDS pulls from where
+# HARVEST MAP: what UncleCred pulls from where
 
 Rule: take the winner, cite the path, MAKE IT BETTER on the way in. Raw copies are reference; packages/ is the deliverable.
 

@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { putObject } from "../lib/r2.js";
 
 export const hello = task({
-  id: "fds.hello",
+  id: "unclecred.hello",
   run: async (payload: { note?: string }) => {
     const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
     const { data: eventId, error } = await sb.schema("system").rpc("emit_event", { p_org: null, p_type: "worker.hello", p_table: null, p_id: null, p_payload: { note: payload.note ?? "" }, p_actor: "trigger" });

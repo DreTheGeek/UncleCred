@@ -1,4 +1,4 @@
--- FDS Phase 01. Extensions and the schema split.
+-- UncleCred Phase 01. Extensions and the schema split.
 create extension if not exists vector with schema extensions;
 create extension if not exists pg_net with schema extensions;
 create extension if not exists pgmq;

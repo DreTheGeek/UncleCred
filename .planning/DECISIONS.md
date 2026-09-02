@@ -3,7 +3,7 @@
 Source for each: R = Step 0 research, B = Boss default accepted, S = standard default.
 
 ## Stack intake (Assumption Law batch, accepted by Boss)
-1. Repo: DreTheGeek/financial-district-studios. Spine from kaldr-core, organs from laseanpickens. (B)
+1. Repo: DreTheGeek/UncleCred. Spine from kaldr-core, organs from laseanpickens. (B)
 2. Database: NEW Supabase project for the studio. LaSeanPickens project stays as is. Year One migrates in later as universe two. (B)
 3. Workflow engine: Trigger.dev v4 Cloud (Free then Hobby), self host on Railway later. Not Temporal. pg_cron only for simple schedules. (R, D1)
 4. Workers: Railway containers for FFmpeg and Remotion and vendor polling. Vercel for the command center. (B, D7)

@@ -1,6 +1,6 @@
 # KICKOFF (paste into Claude Code at the repo root)
 
-You are building Financial District Studios under kaldr-build-system v6.4. Read in this order before writing any code:
+You are building UncleCred under kaldr-build-system v6.4. Read in this order before writing any code:
 1. .planning/STATE.md
 2. .planning/DECISIONS.md (locked, do not reopen)
 3. .planning/RESEARCH.md
