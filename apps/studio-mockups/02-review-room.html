@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Uncle Cred, Review Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="studio.css"><style>
+.rr{display:grid;grid-template-columns:300px 1fr;gap:16px}
+.queue .ep{margin-bottom:8px}.queue .ep.sel{border-color:var(--cred);box-shadow:0 0 0 1px var(--cred)}
+.stage{display:grid;grid-template-columns:270px 1fr;gap:18px}
+.player{aspect-ratio:9/16;width:270px;border-radius:14px;background:linear-gradient(160deg,#1a2233,#0b0f16);border:1px solid var(--line);position:relative;overflow:hidden}
+.player .cap{position:absolute;left:12px;right:12px;bottom:70px;text-align:center;font-family:var(--disp);font-size:22px;line-height:1;text-shadow:0 2px 8px #000}
+.player .cap b{color:var(--cred)}
+.player .bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--line)}
+.player .bar i{display:block;height:100%;width:38%;background:var(--cred)}
+.player .tag{position:absolute;top:10px;left:10px}
+.player .beat{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.player .who{position:absolute;bottom:26px;left:12px;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.beats{display:flex;gap:4px;margin-top:10px}
+.beats i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.beats i.on{background:var(--cred)}.beats i.bad{background:var(--red)}
+.script li{list-style:none;display:grid;grid-template-columns:44px 84px 1fr;gap:10px;padding:8px 0;border-top:1px dashed var(--line);font-size:12.5px}
+.script li:first-child{border-top:0}
+.script .tc{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.script .who{font-family:var(--disp);font-size:14px;letter-spacing:.03em}
+.script .who.uc{color:var(--cred)}
+.script li.flag{background:rgba(224,168,58,.06);border-radius:6px;padding:8px 6px;margin:0 -6px}
+.script .why{font-family:var(--mono);font-size:10.5px;color:var(--amber);margin-top:3px}
+.shots{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.shot{aspect-ratio:9/16;border-radius:8px;background:linear-gradient(160deg,#1a2233,#0b0f16);border:1px solid var(--line);position:relative;font-family:var(--mono);font-size:10px;color:var(--dim);padding:6px}
+.shot b{display:block;color:var(--txt);font-family:var(--disp);font-size:16px;letter-spacing:.03em}
+.shot .sc{position:absolute;bottom:6px;left:6px;right:6px;display:flex;justify-content:space-between}
+.shot.bad{border-color:var(--red)}.shot.re{border-color:var(--amber)}
+.dist{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.dist div{border:1px solid var(--line);border-radius:8px;padding:8px}
+.dist .p{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.dist .h{font-size:12px;margin-top:4px;line-height:1.3}
+.dist .d{font-family:var(--mono);font-size:10px;color:var(--green);margin-top:5px}
+.act{display:flex;gap:8px;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.act textarea{flex:1;font:inherit;font-size:12.5px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--txt);resize:none;height:38px}
+@media (max-width:1180px){.rr{grid-template-columns:1fr}.queue{display:flex;gap:8px;overflow-x:auto}.queue .ep{min-width:220px}}
+@media (max-width:640px){.stage{grid-template-columns:1fr}.player{width:100%;max-width:320px;margin:0 auto}.shots{grid-template-columns:repeat(3,1fr)}.dist{grid-template-columns:1fr 1fr}}
+</style></head><body data-mode="night"><aside>
+  <div class="wordmark">UNCLE CRED<small>STUDIO / KALDR BUSINESS GROUP</small></div>
+  <div class="owner"><div class="av">LP</div><div><b>LaSean Pickens</b><span>Owner, Executive Producer</span></div></div>
+  <div class="switch"><span>Universe</span><em>uncle_cred</em></div>
+  <nav>
+    <a href="01-command-center.html" class="">Command Center</a>
+    <a href="02-review-room.html" class="on">Review Room <span class="badge you">3</span></a>
+    <div class="grp">Universe</div>
+    <a href="03-characters.html" class="">Characters <span class="badge">5</span></a>
+    <a>Canon</a><a>Locations &amp; Props</a>
+    <div class="grp">Production</div>
+    <a>Writers Room <span class="badge">7</span></a><a>Episodes</a><a>Pipeline <span class="badge hot">1</span></a><a>Asset Library</a>
+    <div class="grp">Distribution</div>
+    <a>Calendar</a><a>Publishing</a><a>Analytics</a>
+    <div class="grp">Intelligence</div>
+    <a href="04-learnings.html" class="">Learnings</a><a>Experiments</a><a>Knowledge</a><a>AI Ops &amp; Cost</a>
+  </nav>
+  <div class="help"><b>Need help?</b><span>Ask Uncle Cred in the rail, or open the tour with ? at any time.</span></div>
+  <div class="foot"><a>What's new</a><a>Log out</a></div>
+</aside>
+<main><div class="top"><h1>REVIEW ROOM</h1><div class="search">Search episodes, characters, claims, events<kbd>Ctrl K</kbd></div><div class="icons"><div class="ib">&#9993;<i class="dot"></i></div><div class="ib">&#9881;</div><button class="mode" onclick="toggleMode()" id="modeBtn">NIGHT</button></div></div>
+<div class="greet"><div><h2 class="disp">3 WAITING ON YOU.</h2><p>Everything here passed every gate. Your job is taste, not QA. Approve, send back with a note, or kill. <b>Median review time this month: 1m 40s.</b></p></div><div class="acts"><button class="btn ghost">Approve all 3</button></div></div>
+<div class="rr">
+  <div class="queue">
+    <div class="ep sel"><div class="t">Ep 12. Before you apply for that Charger</div><div class="m"><span>0:47, free_game</span><span class="pill p-you">YOU</span></div><div class="cast"><i class="uc">C</i></div></div>
+    <div class="ep"><div class="t">Ep 9. Plug's Credit Court: the gym membership</div><div class="m"><span>0:58, take</span><span class="pill p-you">YOU</span></div><div class="cast"><i class="uc">C</i><i>D</i></div></div>
+    <div class="ep"><div class="t">Ep 8. Funding Friday: revenue vs profit</div><div class="m"><span>1:12, build</span><span class="pill p-you">YOU</span></div><div class="cast"><i>F</i></div></div>
+    <div class="panel" style="margin-top:6px"><div class="ph"><h3>GATE LOG</h3><span class="sub">Ep 12</span></div>
+      <ul class="feed">
+        <li><span class="tm">08:41</span><span>Episode QA 0.93. Pass.</span></li>
+        <li><span class="tm">08:30</span><span>Shot 4 regenerated once, identity 0.89 to 0.97</span></li>
+        <li><span class="tm">08:02</span><span>Grounding: 3 of 3 claims verified</span></li>
+        <li><span class="tm">07:48</span><span>Voice check 0.94 against the Voice Bible</span></li>
+        <li><span class="tm">07:40</span><span>Blocklist: clean. Disclosure frame injected at 0:02.</span></li>
+      </ul></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div><div class="mono" style="font-size:10.5px;color:var(--dim);letter-spacing:.12em">EP 12, FREE_GAME, DESK TO CAMERA</div><h3 style="font-size:26px">BEFORE YOU APPLY FOR THAT CHARGER</h3></div><span class="pill p-ok">EPISODE QA 0.93</span></div>
+    <div class="stage">
+      <div>
+        <div class="player">
+          <span class="tag pill p-ok">AI LABEL ON</span><span class="beat">beat 3 of 7</span>
+          <div class="cap">BRO. BEFORE YOU APPLY<br>FOR THAT <b>CHARGER</b></div>
+          <div class="who">uncle_cred, office, 0:18</div>
+          <div class="bar"><i></i></div>
+        </div>
+        <div class="beats"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+        <div class="mono" style="margin-top:12px;font-size:10.5px">HOOK 0:00 to 0:03. PAYOFF 0:09. CTA 0:41.</div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--dim);margin-bottom:6px">SCRIPT, AS RENDERED</div>
+        <ul class="script">
+          <li><span class="tc">0:00</span><span class="who uc">UNCLE CRED</span><span>Bro. Before you apply for that Charger, come here.</span></li>
+          <li><span class="tc">0:04</span><span class="who uc">UNCLE CRED</span><span>You got a 712 and you still might get denied. Not because of the score. Because of what the dealer's lender sees on the statement date.</span></li>
+          <li><span class="tc">0:14</span><span class="who">OVERLAY</span><span>Card limit $1,000. Balance on statement day $640. Utilization 64%.</span></li>
+          <li class="flag"><span class="tc">0:22</span><span class="who uc">UNCLE CRED</span><span>Pay it down to under 30 before the statement closes and the number they pull looks different.<div class="why">verifier note: "looks different" kept. Original draft said "goes up 40 points", removed as a guarantee.</div></span></li>
+          <li><span class="tc">0:33</span><span class="who">MR. DENIED</span><span>(off screen) DENIED.</span></li>
+          <li><span class="tc">0:35</span><span class="who uc">UNCLE CRED</span><span>Not today, Denied. Not today.</span></li>
+          <li><span class="tc">0:41</span><span class="who">CTA</span><span>{PRODUCT_NAME} watches your statement dates for you. Link in bio.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--dim);margin:16px 0 8px">SHOTS, 6 OF 6 PASSED</div>
+    <div class="shots">
+      <div class="shot"><b>1</b>hook, closeup<div class="sc"><span>id .97</span><span>hedra</span></div></div>
+      <div class="shot"><b>2</b>desk, wide<div class="sc"><span>id .96</span><span>kling</span></div></div>
+      <div class="shot"><b>3</b>overlay card<div class="sc"><span>render</span><span>api</span></div></div>
+      <div class="shot re"><b>4</b>closeup, retry 1<div class="sc"><span>id .97</span><span>hedra</span></div></div>
+      <div class="shot"><b>5</b>stamp insert<div class="sc"><span>prop 1.0</span><span>flux</span></div></div>
+      <div class="shot"><b>6</b>CTA frame<div class="sc"><span>render</span><span>api</span></div></div>
+    </div>
+    <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--dim);margin:16px 0 8px">DISTRIBUTION PACKAGE</div>
+    <div class="dist">
+      <div><div class="p">TikTok</div><div class="h">"712 and still denied? Here's why"</div><div class="d">AIGC label, 0:47</div></div>
+      <div><div class="p">Reels</div><div class="h">"Before you apply for that Charger"</div><div class="d">AI info, 0:47</div></div>
+      <div><div class="p">Shorts</div><div class="h">"The statement date trick dealers won't tell you"</div><div class="d">synthetic declared</div></div>
+      <div><div class="p">Facebook</div><div class="h">"Read this before the dealership"</div><div class="d">0:47, captions burned</div></div>
+      <div><div class="p">LinkedIn</div><div class="h">"Utilization timing and auto lending, explained"</div><div class="d">1:1 crop, no slang</div></div>
+    </div>
+    <div class="act"><textarea placeholder="Note for the writers room or the director (optional)"></textarea><button class="btn ghost">Kill</button><button class="btn">Send back</button><button class="btn pri">Approve, schedule Thu 12:00</button></div>
+  </div>
+</div>
+<div class="tabbar"><a href="01-command-center.html" class="">Home</a><a href="02-review-room.html" class="on">Review</a><a href="03-characters.html" class="">Cast</a><a href="04-learnings.html" class="">Learn</a></div></main>
+<div class="rail">
+  <div class="rp"><h5>Why this episode <span>showrunner</span></h5><div style="font-size:12px;color:var(--dim)">Picked because auto lending questions are up 41% in comments this week and the last 3 Uncle Cred solo episodes averaged 63% completion. Stakes-first opening per learning L-014.</div></div>
+  <div class="rp"><h5>Costs <span class="ver">VERIFIED</span></h5><div class="cash"><div><span>Script + verify</span><span class="mono">$0.31</span></div><div><span>Voice</span><span class="mono">$0.12</span></div><div><span>Shots (7 gens)</span><span class="mono">$3.84</span></div><div><span>QA judge</span><span class="mono">$0.06</span></div><div><span>Render</span><span class="mono">$0.40</span></div><div class="net"><span>Episode</span><span class="mono">$4.73</span></div></div></div>
+  <div class="ask"><h5>ASK UNCLE CRED</h5><div class="chips"><span>Why was the 40 point line cut?</span><span>Show me shot 4 before the retry</span></div><div class="askin"><input placeholder="Ask about this episode"><button>&#8594;</button></div></div>
+</div>
+<script>function toggleMode(){const b=document.body;b.dataset.mode=b.dataset.mode==='night'?'day':'night';document.getElementById('modeBtn').textContent=b.dataset.mode.toUpperCase()}</script></body></html>

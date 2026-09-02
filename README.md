@@ -1,4 +1,4 @@
-# UncleCred
+# Uncle Cred
 
 Autonomous AI animated studio. The Uncle Cred universe: Uncle Cred, Auntie APR, Repo Reggie, Mr. Denied, Funding Frank. Owner: Kaldr Business Group LLC.
 

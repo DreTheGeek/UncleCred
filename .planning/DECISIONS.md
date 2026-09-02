@@ -28,3 +28,7 @@ Source for each: R = Step 0 research, B = Boss default accepted, S = standard de
 
 ## Canon locked
 - Uncle Cred voice: ElevenLabs voice_id b2DJJJVITlSI2seQjLf5, locked, never regenerated. Stored in studio.visual_characters.metadata.voice (row created 2026-09-02).
+
+## Naming and domain (Boss, 2026-09-02)
+- Display name is two words: Uncle Cred. Everywhere a human reads it. The repo slug and code identifiers stay UncleCred / unclecred.
+- Command center lives at content.unclecred.app (Vercel project apps/studio, CNAME at GoDaddy). Add the domain in the Phase 01 Claude Code session.

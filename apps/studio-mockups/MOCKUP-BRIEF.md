@@ -1,6 +1,6 @@
-# MOCKUP BRIEF: UncleCred Command Center
+# MOCKUP BRIEF: Uncle Cred Command Center
 
-Product: UncleCred  Date: 2026-09-02
+Product: Uncle Cred  Date: 2026-09-02
 Brand token source: kaldr-core doctrine/kaldr-build-system/assets/portal-shell-template.html (night and day tokens), KALDR blue #2563EB as the shell accent, Uncle Cred gold #E0A83A as the show accent (provisional until the character is designed).
 Intensity: 3 (a working control room, not a launch page)
 Named direction: The Line. A studio floor board that reads like a broadcast rundown: display face Bebas Neue for headings and figures, IBM Plex Sans body, IBM Plex Mono for every number, timestamp, and status. Density tight in the KPI row and the board, air around the greeting.
@@ -12,10 +12,10 @@ Real assets in hand: no character art yet. Cast avatars are initials on purpose.
 | # | Screen | Status | Signature interaction |
 |---|---|---|---|
 | 1 | Command Center (money + daily driver) | v1 in this file | Click any episode on the line, the QA drawer slides in and the gate bars animate to their scores |
-| 2 | Review Room | next | Approve, send back, kill with a note |
-| 3 | Characters (canon + generation profile) | next | Turnaround sheet with locked and prohibited traits |
-| 4 | Intelligence surface (learnings) | next | Observation to hypothesis to policy |
-| 5 | Mobile of 1 and 2 | next | |
+| 2 | Review Room | v1, 02-review-room.html | Approve, send back, kill with a note |
+| 3 | Characters (canon + generation profile) | v1, 03-characters.html | Turnaround sheet with locked and prohibited traits |
+| 4 | Intelligence surface (learnings) | v1, 04-learnings.html | Observation to hypothesis to policy |
+| 5 | Mobile of 1 to 4 | v1, responsive under 640px in studio.css with a bottom tab bar | |
 
 ## Seven figure test
 1. Signature moment: the line, five lanes from Writers Room to Published, every episode alive with cast chips and stage pills.
@@ -26,7 +26,7 @@ Real assets in hand: no character art yet. Cast avatars are initials on purpose.
 
 ## Pre-render lint
 - Zero em dashes: passed.
-- No 9:41, no lorem, no default Inter: passed.
+- No demo clock, no lorem, no default Inter: passed.
 - Day and night both wired: toggle top right.
 - Reduced motion honored.
 

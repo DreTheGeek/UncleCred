@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Uncle Cred, Characters</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="studio.css"><style>
+.cast5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.cc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer}
+.cc.sel{border-color:var(--cred);box-shadow:0 0 0 1px var(--cred)}
+.cc .av{aspect-ratio:1;border-radius:10px;background:linear-gradient(160deg,#1a2233,#0b0f16);display:grid;place-items:center;font-family:var(--disp);font-size:44px;color:var(--dim);margin-bottom:8px}
+.cc.sel .av{color:var(--cred)}
+.cc b{display:block;font-family:var(--disp);font-size:18px;letter-spacing:.03em}
+.cc small{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.sheet{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.turn{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.turn div{aspect-ratio:3/4;border-radius:8px;background:linear-gradient(160deg,#1a2233,#0b0f16);border:1px solid var(--line);display:grid;place-items:end start;padding:6px;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.expr{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.expr div{aspect-ratio:1;border-radius:6px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:9.5px;color:var(--dim);text-align:center}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 10px;font-size:12.5px}
+.kv .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding-top:2px}
+.lock{font-family:var(--mono);font-size:10px;color:var(--green);border:1px solid rgba(51,209,122,.4);padding:1px 5px;border-radius:4px;margin-left:6px}
+.ban li{list-style:none;font-size:12.5px;padding:5px 0;border-top:1px dashed var(--line);display:flex;gap:8px}
+.ban li:first-child{border-top:0}
+.ban li::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--red);margin-top:5px;flex:none}
+.recipe{font-family:var(--mono);font-size:11.5px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;line-height:1.6;white-space:pre}
+.recipe b{color:var(--cred);font-weight:500}
+.bench td,.bench th{padding:6px 8px}
+@media (max-width:1180px){.cast5{grid-template-columns:repeat(3,1fr)}.sheet{grid-template-columns:1fr}}
+@media (max-width:640px){.cast5{display:flex;overflow-x:auto;gap:8px}.cc{min-width:120px}.turn{grid-template-columns:repeat(2,1fr)}.expr{grid-template-columns:repeat(3,1fr)}}
+</style></head><body data-mode="night"><aside>
+  <div class="wordmark">UNCLE CRED<small>STUDIO / KALDR BUSINESS GROUP</small></div>
+  <div class="owner"><div class="av">LP</div><div><b>LaSean Pickens</b><span>Owner, Executive Producer</span></div></div>
+  <div class="switch"><span>Universe</span><em>uncle_cred</em></div>
+  <nav>
+    <a href="01-command-center.html" class="">Command Center</a>
+    <a href="02-review-room.html" class="">Review Room <span class="badge you">3</span></a>
+    <div class="grp">Universe</div>
+    <a href="03-characters.html" class="on">Characters <span class="badge">5</span></a>
+    <a>Canon</a><a>Locations &amp; Props</a>
+    <div class="grp">Production</div>
+    <a>Writers Room <span class="badge">7</span></a><a>Episodes</a><a>Pipeline <span class="badge hot">1</span></a><a>Asset Library</a>
+    <div class="grp">Distribution</div>
+    <a>Calendar</a><a>Publishing</a><a>Analytics</a>
+    <div class="grp">Intelligence</div>
+    <a href="04-learnings.html" class="">Learnings</a><a>Experiments</a><a>Knowledge</a><a>AI Ops &amp; Cost</a>
+  </nav>
+  <div class="help"><b>Need help?</b><span>Ask Uncle Cred in the rail, or open the tour with ? at any time.</span></div>
+  <div class="foot"><a>What's new</a><a>Log out</a></div>
+</aside>
+<main><div class="top"><h1>CHARACTERS</h1><div class="search">Search episodes, characters, claims, events<kbd>Ctrl K</kbd></div><div class="icons"><div class="ib">&#9993;<i class="dot"></i></div><div class="ib">&#9881;</div><button class="mode" onclick="toggleMode()" id="modeBtn">NIGHT</button></div></div>
+<div class="greet"><div><h2 class="disp">THE CAST.</h2><p>Canon is the law the generators obey. Locked traits never change. Prohibited changes fail QA on sight. <b>1 of 5 has a locked voice. 0 of 5 have a trained LoRA.</b></p></div><div class="acts"><button class="btn ghost">Run benchmark A to E</button><button class="btn pri">Train LoRA v1</button></div></div>
+<div class="cast5">
+  <div class="cc sel"><div class="av">C</div><b>UNCLE CRED</b><small>lead. voice locked. LoRA none</small></div>
+  <div class="cc"><div class="av">A</div><b>AUNTIE APR</b><small>voice pending. LoRA none</small></div>
+  <div class="cc"><div class="av">R</div><b>REPO REGGIE</b><small>voice pending. LoRA none</small></div>
+  <div class="cc"><div class="av">D</div><b>MR. DENIED</b><small>voice pending. LoRA none</small></div>
+  <div class="cc"><div class="av">F</div><b>FUNDING FRANK</b><small>voice pending. LoRA none</small></div>
+</div>
+<div class="sheet">
+  <div class="panel">
+    <div class="ph"><h3>TURNAROUND, UNCLE CRED</h3><span class="pill p-warn">NO REFERENCE ART YET</span></div>
+    <div class="turn"><div>front</div><div>3/4</div><div>profile</div><div>full body</div></div>
+    <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--dim);margin:12px 0 6px">EXPRESSIONS</div>
+    <div class="expr"><div>neutral</div><div>come here</div><div>disappointed</div><div>proud</div><div>not today</div><div>laugh</div></div>
+    <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--dim);margin:14px 0 6px">GENERATION RECIPE, v0 (fills when LoRA v1 lands)</div>
+    <div class="recipe">image:   <b>fal-ai/flux-general</b>  lora: <b>uncle_cred_v1</b> @ 0.85
+control: pose via ControlNet, ip-adapter on front ref, guidance 3.5
+talking: <b>hedra character-3</b> 720p, voice <b>b2DJJJVITlSI2seQjLf5</b>
+video:   dialogue closeup = hedra, two shot = kling 3.0 singles only
+QA:      identity >= 0.94 hero, >= 0.90 two shot, wardrobe = 1.0
+retry:   max 4 auto, then escalate to Boss</div>
+  </div>
+  <div>
+    <div class="panel"><div class="ph"><h3>CANON</h3><span class="sub">studio.visual_characters</span></div>
+      <div class="kv">
+        <span class="k">Role</span><span>Lead. The friend who knows what banks, bureaus, and lenders are looking for.</span>
+        <span class="k">Voice</span><span>ElevenLabs b2DJJJVITlSI2seQjLf5 <span class="lock">LOCKED</span></span>
+        <span class="k">Age range</span><span>50s <span class="pill p-warn">CONFIRM</span></span>
+        <span class="k">Wardrobe</span><span>not set. Boss supplies or picks from a generated set.</span>
+        <span class="k">Speech</span><span>"Bro." "Come here." "Not today." Explains after the hook, never before.</span>
+        <span class="k">Locations</span><span>Financial District bank, his office, the dealership</span>
+        <span class="k">Relationships</span><span>Mr. Denied stamps him, he always wins. Auntie APR is the one person he listens to.</span>
+      </div></div>
+    <div class="panel"><div class="ph"><h3>PROHIBITED CHANGES</h3><span class="sub">hard QA fail</span></div>
+      <ul class="ban"><li>Face, skin tone, or age drift between shots</li><li>Glasses, watch, or wardrobe swapped without a canon update</li><li>Any real customer framing or testimonial voice</li><li>Legal advice, statute citations, "you should sue"</li><li>Guarantees, score jump numbers, "we will delete"</li></ul></div>
+    <div class="panel"><div class="ph"><h3>BENCHMARK LAB</h3><span class="sub">scenes A to E</span></div>
+      <table class="bench"><thead><tr><th>Scene</th><th>Kling 3.0</th><th>Seedance 2.0</th><th>Runway 4.5</th></tr></thead><tbody>
+        <tr><td>A. Cred in office</td><td class="mono">not run</td><td class="mono">not run</td><td class="mono">not run</td></tr>
+        <tr><td>B. Cred + APR two shot</td><td class="mono">not run</td><td class="mono">not run</td><td class="mono">not run</td></tr>
+        <tr><td>C. Reggie and the tow</td><td class="mono">not run</td><td class="mono">not run</td><td class="mono">not run</td></tr>
+        <tr><td>D. Four in frame</td><td class="mono">not run</td><td class="mono">not run</td><td class="mono">not run</td></tr>
+        <tr><td>E. Closeup emotion</td><td class="mono">not run</td><td class="mono">not run</td><td class="mono">not run</td></tr>
+      </tbody></table></div>
+  </div>
+</div>
+<div class="tabbar"><a href="01-command-center.html" class="">Home</a><a href="02-review-room.html" class="">Review</a><a href="03-characters.html" class="on">Cast</a><a href="04-learnings.html" class="">Learn</a></div></main>
+<div class="rail">
+  <div class="rp"><h5>Needs you <span>3</span></h5><label class="task"><input type="checkbox"><span>Supply or pick Uncle Cred's look (front, 3/4, full body)</span></label><label class="task"><input type="checkbox"><span>Confirm age range and wardrobe</span></label><label class="task"><input type="checkbox"><span>Voice IDs for APR, Reggie, Denied, Frank</span></label></div>
+  <div class="rp"><h5>Fidelity, 30 days <span class="ver">VERIFIED</span></h5><div style="font-size:12px;color:var(--dim)">No data yet. Fills after the first 20 shots pass QA.</div></div>
+  <div class="ask"><h5>ASK UNCLE CRED</h5><div class="chips"><span>What breaks identity most often?</span><span>Draft Auntie APR's canon</span></div><div class="askin"><input placeholder="Ask about the cast"><button>&#8594;</button></div></div>
+</div>
+<script>function toggleMode(){const b=document.body;b.dataset.mode=b.dataset.mode==='night'?'day':'night';document.getElementById('modeBtn').textContent=b.dataset.mode.toUpperCase()}</script></body></html>
