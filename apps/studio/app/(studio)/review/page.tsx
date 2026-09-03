@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { READY_FOR_LASEAN } from "@/lib/constants";
 import { EmptyState, ErrorState, NoMembershipState } from "@/components/EmptyState";
+import { getMembership } from "@/lib/membership";
 import { DecisionBar } from "./DecisionBar";
 
 export const dynamic = "force-dynamic";
@@ -63,7 +64,9 @@ export default async function ReviewRoom({
       .from("visual_characters")
       .select("id", { count: "exact", head: true });
 
-    const invisible = (anyEpisodes ?? 0) === 0 && (anyCharacters ?? 0) === 0;
+    // Ask about membership; do not infer it from empty counts.
+    const membership = await getMembership();
+    const invisible = membership.state !== "member";
 
     return (
       <>

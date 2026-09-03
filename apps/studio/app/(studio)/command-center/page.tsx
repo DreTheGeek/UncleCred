@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { READY_FOR_LASEAN } from "@/lib/constants";
-import { EmptyState, NoMembershipState } from "@/components/EmptyState";
+import { EmptyState, NoMembershipState, ErrorState } from "@/components/EmptyState";
+import { getMembership } from "@/lib/membership";
 
 export const dynamic = "force-dynamic";
 
@@ -31,15 +32,16 @@ export default async function CommandCenter() {
     toCount(supabase.schema("system").from("system_events").select("id", head)),
   ]);
 
-  // Every readable table returning zero is the signature of a session with no org membership.
-  const invisible =
-    (episodes ?? 0) === 0 && (characters ?? 0) === 0 && (chunks ?? 0) === 0 && (events ?? 0) === 0;
-
-  if (invisible) {
+  const membership = await getMembership();
+  if (membership.state !== "member") {
     return (
       <>
         <h1 className="disp mb-5 text-[28px] leading-none">COMMAND CENTER</h1>
-        <NoMembershipState email={user?.email ?? undefined} />
+        {membership.state === "not_member" ? (
+          <NoMembershipState email={user?.email ?? undefined} />
+        ) : (
+          <ErrorState what="your membership" />
+        )}
       </>
     );
   }
