@@ -75,6 +75,13 @@ export class FalProvider {
     if (req.loras.length > 0) input.loras = req.loras.map((l) => ({ path: l.path, scale: l.scale }));
     if (req.referenceImageUrls.length > 0) input.image_urls = req.referenceImageUrls;
 
+    // Reference conditioning. flux-general takes a single canonical reference plus a strength,
+    // which is the mechanism DECISIONS calls for on every character shot.
+    if (req.referenceImageUrl) {
+      input.reference_image_url = req.referenceImageUrl;
+      input.reference_strength = req.referenceStrength;
+    }
+
     let data: unknown;
     try {
       const out = await fal.subscribe(model.provider_model_id, { input, logs: false });

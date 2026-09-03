@@ -44,6 +44,14 @@ export const ImageRequest = z.object({
     .array(z.object({ path: z.string().url(), scale: z.number().min(0).max(2).default(1) }))
     .default([]),
   referenceImageUrls: z.array(z.string().url()).default([]),
+  /**
+   * Canonical reference image. DECISIONS requires reference conditioned generation for any
+   * character shot: LoRA plus canonical ref, never LoRA alone. Generating without one is how
+   * a seed produces a stranger who is still wearing the right clothes.
+   */
+  referenceImageUrl: z.string().url().nullable().default(null),
+  /** 0 ignores the reference, 1 follows it hard. Identity work lives around 0.5 to 0.8. */
+  referenceStrength: z.number().min(0).max(1).default(0.65),
   imageSize: z
     .enum(["square_hd", "square", "portrait_4_3", "portrait_16_9", "landscape_4_3", "landscape_16_9"])
     .default("portrait_16_9"),
