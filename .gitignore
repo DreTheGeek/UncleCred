@@ -6,3 +6,4 @@ refs/
 *.safetensors
 .vercel/
 .DS_Store
+supabase/.temp/
