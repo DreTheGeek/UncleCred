@@ -50,6 +50,7 @@ const TRAIT_ORDER = [
   "hair",
   "hairline",
   "beard",
+  "teeth",
   "build",
   "height",
   "vibe",
@@ -94,15 +95,34 @@ export function buildCharacterPrompt(
   }
 
   // Wardrobe is an asset, not an adjective. Resolve the named item rather than describing it.
-  const wardrobe = c.wardrobe as { items?: Record<string, string>; default?: string };
+  const wardrobe = c.wardrobe as { items?: Record<string, string>; default?: string; always_worn?: string[] };
+  const wardrobeAssets = wardrobe as { always_worn?: string[] };
   const wardrobeKey = scene.wardrobeKey ?? wardrobe.default ?? null;
   const wardrobeItem = wardrobeKey ? str(wardrobe.items?.[wardrobeKey]) : null;
   if (wardrobeItem) used.wardrobe = `${wardrobeKey}: ${wardrobeItem}`;
 
-  // Accessories that are part of the person, not the outfit.
-  const accessories = ["chain", "watch", "earrings"]
-    .map((k) => (str(pt[k]) ? `${str(pt[k])}` : null))
-    .filter((x): x is string => Boolean(x));
+  // Accessories. wardrobe.items is the asset registry and wins over physical_traits.
+  //
+  // These were duplicated across both, and on 2026-09-03 they disagreed: wardrobe.items held the
+  // correct Audemars Piguet Royal Oak while physical_traits still described a skeleton dial on a
+  // brown leather strap. The builder read physical_traits and rendered the wrong watch for days.
+  // Same failure as the glasses: two sources of truth and no rule about which one wins.
+  //
+  // wardrobe.always_worn lists what the character is never without.
+  const alwaysWorn = Array.isArray(wardrobeAssets.always_worn) ? wardrobeAssets.always_worn : [];
+  const accessories: string[] = [];
+  for (const key of alwaysWorn) {
+    const item = str(wardrobe.items?.[key]);
+    if (item && item !== wardrobeItem) {
+      accessories.push(item);
+      used[key] = item;
+    }
+  }
+  // Anything on the person that the registry does not cover.
+  for (const k of ["earrings"]) {
+    const v = str(pt[k]);
+    if (v) { accessories.push(v); used[k] = v; }
+  }
   if (accessories.length) used.accessories = accessories.join("; ");
 
   const lora = c.metadata.lora as { id?: string; url?: string } | undefined;
