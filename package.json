@@ -1,0 +1,15 @@
+{
+  "name": "unclecred",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "train:lora": "node scripts/train-lora.mjs",
+    "mint:key": "node scripts/mint-key.mjs"
+  },
+  "dependencies": {
+    "@fal-ai/client": "^1",
+    "@supabase/supabase-js": "^2",
+    "jszip": "^3",
+    "postgres": "^3"
+  }
+}
