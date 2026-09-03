@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 // Train UNCLECRED_V1 on fal from a folder of real photos, then lock the LoRA into canon.
 // Usage: node --env-file=.env.local scripts/train-lora.mjs ./refs/uncle_cred/final uncle_cred UNCLECRED_V1
+// TODO: metadata merge here is a read-modify-write, two round trips, last writer wins. Safe for a
+// one-shot manual run, not for concurrent writers. When the LoRA write moves into the pipeline
+// worker, collapse it to a single statement inside the stage: metadata = metadata || $1::jsonb.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";

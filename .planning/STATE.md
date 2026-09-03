@@ -21,6 +21,7 @@ See DECISIONS.md. Nothing there is reopened without Boss saying so.
 - State CSO registration and bond status in TX, GA, CA, FL. Lawyer, not research.
 - InsightFace buffalo model license is non commercial. QA gate needs a commercially licensed embedding or LoRA anchored CLIP/DINOv2 as identity metric.
 - Credit Buddy (partner brand) could not be verified publicly. Boss has first hand knowledge.
+- LoRA canon write in scripts/train-lora.mjs is a read-modify-write on metadata, two round trips, last writer wins. Fine for the one-shot manual run. Resolve when the write moves into the pipeline worker: one statement inside the stage, metadata = metadata || $1::jsonb.
 
 ## Infrastructure
 - Supabase project: pdficpdfrituqjzaleen (https://pdficpdfrituqjzaleen.supabase.co). Studio database. Not the LaSeanPickens project.
