@@ -208,17 +208,21 @@ Deno.serve(async (req) => {
       try {
         const result = await tool.run(args, principal);
         // Audit every call. Fort Knox wants the trail, and the ledger is the trail.
-        await admin()
-          .schema("system")
-          .rpc("emit_event", {
+        // supabase-js rpc() returns a thenable, not a Promise, so it has no .catch().
+        // A failed audit write must never fail the tool call, hence the try/catch.
+        try {
+          const { error: auditErr } = await admin().schema("system").rpc("emit_event", {
             p_org: principal.organizationId,
             p_type: "mcp.tool.called",
             p_table: null,
             p_id: null,
             p_payload: { tool: name, principal: principal.id },
             p_actor: "mcp",
-          })
-          .catch(() => {});
+          });
+          if (auditErr) console.error("mcp audit write failed:", auditErr.message);
+        } catch (auditThrow) {
+          console.error("mcp audit write threw:", errText(auditThrow));
+        }
         return rpc(id, {
           content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
           isError: false,
