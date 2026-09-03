@@ -10,7 +10,7 @@ import { createClient } from "@supabase/supabase-js";
 import { fal } from "@fal-ai/client";
 import JSZip from "jszip";
 
-const [dir, character = "uncle_cred", trigger = "UNCLECRED_V1"] = process.argv.slice(2);
+const [dir, character = "uncle_cred", trigger = "UNCLECRED_V1", trainer = "fal-ai/flux-lora-fast-training"] = process.argv.slice(2);
 if (!dir) throw new Error("folder required");
 for (const k of ["FAL_KEY", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]) if (!process.env[k]) throw new Error(`${k} missing`);
 fal.config({ credentials: process.env.FAL_KEY });
@@ -21,16 +21,29 @@ const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_R
 const { data: row, error: readErr } = await sb.schema("studio").from("visual_characters").select("id, metadata").eq("character_code", character).single();
 if (readErr || !row) throw new Error(`canon row for ${character} not found: ${readErr?.message ?? "no row"}`);
 
-const files = readdirSync(dir).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort();
+const files = readdirSync(dir).filter((f) => /.(jpe?g|png|webp)$/i.test(f)).sort();
+
+// Caption files ride along in the archive. Whatever a caption describes becomes variable and
+// promptable; whatever it omits is welded into the trigger word. v3 shipped with no captions,
+// so the white tee, the gray wall and the silver cross pendant became part of the character.
+const captions = readdirSync(dir).filter((f) => /.txt$/i.test(f)).sort();
+if (captions.length && captions.length !== files.length) {
+  console.warn(`WARNING: ${files.length} images but ${captions.length} captions.`);
+}
+console.log(captions.length ? `captions: ${captions.length}` : "captions: NONE, the whole frame will be baked into the trigger word");
 if (files.length < 15) console.warn(`only ${files.length} images; 15 to 30 clean frames recommended`);
 const zip = new JSZip();
 for (const f of files) zip.file(f, readFileSync(join(dir, f)));
+for (const f of captions) zip.file(f, readFileSync(join(dir, f)));
 const blob = new Blob([await zip.generateAsync({ type: "uint8array" })], { type: "application/zip" });
 const zipUrl = await fal.storage.upload(blob);
 console.log("uploaded", files.length, "images");
 
-const result = await fal.subscribe("fal-ai/flux-lora-fast-training", {
-  input: { images_data_url: zipUrl, trigger_word: trigger, steps: 1000, create_masks: true, is_style: false },
+const isPortrait = trainer.includes("portrait");
+const triggerParam = isPortrait ? { trigger_phrase: trigger } : { trigger_word: trigger };
+console.log("trainer:", trainer);
+const result = await fal.subscribe(trainer, {
+  input: { images_data_url: zipUrl, ...triggerParam, steps: 1000, create_masks: true, ...(isPortrait ? { subject_crop: true } : { is_style: false }) },
   logs: true,
   onQueueUpdate: (u) => u.status === "IN_PROGRESS" && u.logs?.forEach((l) => console.log(l.message)),
 });
@@ -39,7 +52,7 @@ if (!loraUrl) throw new Error("no lora url in result");
 console.log("lora", loraUrl);
 
 // Merge, never overwrite: read-modify-write on the jsonb so voice, consent, identity_version survive.
-const lora = { id: trigger, url: loraUrl, trainer: "fal-ai/flux-lora-fast-training", steps: 1000, images: files.length, trained_at: new Date().toISOString(), locked: true };
+const lora = { id: trigger, url: loraUrl, trainer, captions: captions.length, steps: 1000, images: files.length, trained_at: new Date().toISOString(), locked: true };
 
 // Retraining must never silently drop the LoRA it replaces. A v3 that turns out worse than v1
 // should be a rollback, not another training run, and that is only possible if the old artifact

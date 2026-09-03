@@ -13,6 +13,9 @@ import {
   type ImageRequest,
   type ModelRow,
   type TranscriptionRequest,
+  type VideoRequest,
+  type LipsyncRequest,
+  type VoiceRequest,
 } from "../types.ts";
 
 // fal image endpoints all return an images array; fields beyond these are ignored on purpose.
@@ -180,6 +183,98 @@ export class FalProvider {
       costUsd: Number(((model.estimated_cost ?? 0) * minutes).toFixed(6)),
       seed: null,
       durationMs: Date.now() - started,
+    };
+  }
+
+  /** ElevenLabs through fal. The voice id is canon and is never chosen at call time. */
+  async voice(model: ModelRow, req: VoiceRequest): Promise<GenerationResult> {
+    const started = Date.now();
+    let data: unknown;
+    try {
+      const out = await fal.subscribe(model.provider_model_id, {
+        input: { text: req.text, voice: req.voiceId, stability: 0.5, similarity_boost: 0.75 },
+        logs: false,
+      });
+      data = (out as { data: unknown }).data;
+    } catch (e) {
+      throw new GenerationError(
+        `fal tts failed: ${e instanceof Error ? e.message : String(e)}`,
+        this.name, model.provider_model_id, e);
+    }
+    const parsed = z.object({ audio: z.object({ url: z.string().url() }) }).safeParse(data);
+    if (!parsed.success) {
+      throw new GenerationError(`fal tts response had no audio url`, this.name, model.provider_model_id);
+    }
+    const chars = req.text.length;
+    return {
+      capability: "voice", provider: this.name, model: model.provider_model_id,
+      assets: [], mediaUrl: parsed.data.audio.url, raw: data,
+      units: chars / 1000, unitKind: "1k_chars",
+      costUsd: Number(((model.estimated_cost ?? 0) * (chars / 1000)).toFixed(6)),
+      seed: null, durationMs: Date.now() - started,
+    };
+  }
+
+  /** Image to video. DECISIONS D4 forbids text to video for a character shot. */
+  async video(model: ModelRow, req: VideoRequest): Promise<GenerationResult> {
+    const started = Date.now();
+    let data: unknown;
+    try {
+      const out = await fal.subscribe(model.provider_model_id, {
+        input: {
+          prompt: req.prompt,
+          image_url: req.imageUrl,
+          duration: String(req.durationSeconds),
+          aspect_ratio: req.aspectRatio,
+          cfg_scale: req.cfgScale,
+          ...(req.negativePrompt ? { negative_prompt: req.negativePrompt } : {}),
+        },
+        logs: false,
+      });
+      data = (out as { data: unknown }).data;
+    } catch (e) {
+      throw new GenerationError(
+        `fal video failed: ${e instanceof Error ? e.message : String(e)}`,
+        this.name, model.provider_model_id, e);
+    }
+    const parsed = z.object({ video: z.object({ url: z.string().url() }) }).safeParse(data);
+    if (!parsed.success) {
+      throw new GenerationError(`fal video response had no video url`, this.name, model.provider_model_id);
+    }
+    return {
+      capability: "video", provider: this.name, model: model.provider_model_id,
+      assets: [], mediaUrl: parsed.data.video.url, raw: data,
+      units: req.durationSeconds, unitKind: "second",
+      costUsd: Number(((model.estimated_cost ?? 0) * req.durationSeconds).toFixed(6)),
+      seed: null, durationMs: Date.now() - started,
+    };
+  }
+
+  /** Lip sync: an existing clip plus an audio track. */
+  async lipsync(model: ModelRow, req: LipsyncRequest): Promise<GenerationResult> {
+    const started = Date.now();
+    let data: unknown;
+    try {
+      const out = await fal.subscribe(model.provider_model_id, {
+        input: { video_url: req.videoUrl, audio_url: req.audioUrl, sync_mode: "cut_off" },
+        logs: false,
+      });
+      data = (out as { data: unknown }).data;
+    } catch (e) {
+      throw new GenerationError(
+        `fal lipsync failed: ${e instanceof Error ? e.message : String(e)}`,
+        this.name, model.provider_model_id, e);
+    }
+    const parsed = z.object({ video: z.object({ url: z.string().url() }) }).safeParse(data);
+    if (!parsed.success) {
+      throw new GenerationError(`fal lipsync response had no video url`, this.name, model.provider_model_id);
+    }
+    return {
+      capability: "talking_head", provider: this.name, model: model.provider_model_id,
+      assets: [], mediaUrl: parsed.data.video.url, raw: data,
+      units: 1, unitKind: "clip",
+      costUsd: Number((model.estimated_cost ?? 0).toFixed(6)),
+      seed: null, durationMs: Date.now() - started,
     };
   }
 }

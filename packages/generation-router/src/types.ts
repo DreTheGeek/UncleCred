@@ -78,10 +78,31 @@ export const TranscriptionRequest = z.object({
 });
 export type TranscriptionRequest = z.infer<typeof TranscriptionRequest>;
 
+export const VideoRequest = z.object({
+  capability: z.literal("video"),
+  prompt: z.string().min(1),
+  negativePrompt: z.string().optional(),
+  /** DECISIONS D4: never text to video for a character shot. Image to video from an
+   *  approved keyframe is the only path, so this is required, not optional. */
+  imageUrl: z.string().url(),
+  durationSeconds: z.union([z.literal(5), z.literal(10)]).default(5),
+  aspectRatio: z.enum(["16:9", "9:16", "1:1"]).default("9:16"),
+  cfgScale: z.number().min(0).max(1).default(0.5),
+});
+export type VideoRequest = z.infer<typeof VideoRequest>;
+
+export const LipsyncRequest = z.object({
+  capability: z.literal("talking_head"),
+  videoUrl: z.string().url(),
+  audioUrl: z.string().url(),
+});
+export type LipsyncRequest = z.infer<typeof LipsyncRequest>;
 export const GenerationRequest = z.discriminatedUnion("capability", [
   ImageRequest,
   VoiceRequest,
   TranscriptionRequest,
+  VideoRequest,
+  LipsyncRequest,
 ]);
 export type GenerationRequest = z.infer<typeof GenerationRequest>;
 
@@ -98,6 +119,8 @@ export const GenerationResult = z.object({
       height: z.number().int().nullable().default(null),
     }),
   ),
+  /** Non image outputs: audio and video land here as a single url. */
+  mediaUrl: z.string().url().nullable().default(null),
   raw: z.unknown(),
   units: z.number().nonnegative(),
   unitKind: z.string(),

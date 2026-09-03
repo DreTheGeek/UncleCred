@@ -103,14 +103,9 @@ export class GenerationRouter {
       if (!this.#fal) throw new GenerationError("FAL_KEY not configured", "fal", model.provider_model_id);
       if (request.capability === "image") return this.#fal.image(model, request);
       if (request.capability === "transcription") return this.#fal.transcription(model, request);
-    }
-    if (request.capability === "voice") {
-      throw new GenerationError(
-        "Voice is not wired yet. ElevenLabs needs ELEVENLABS_API_KEY and a provider adapter; " +
-          "the voice_id per character is already locked in canon metadata.",
-        model.provider,
-        model.provider_model_id,
-      );
+      if (request.capability === "voice") return this.#fal.voice(model, request);
+      if (request.capability === "video") return this.#fal.video(model, request);
+      if (request.capability === "talking_head") return this.#fal.lipsync(model, request);
     }
     throw new GenerationError(
       `No adapter for provider=${model.provider} capability=${request.capability}`,
