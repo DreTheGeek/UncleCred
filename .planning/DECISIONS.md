@@ -58,3 +58,5 @@ Boss's whole job in this software is click, click, click, output. Nothing he tou
 - Face Master 001 is a photograph from the reference shoot. LoRA trains on real photos only. Identity QA compares to the real man at 0.95.
 - Likeness and voice consent recorded in canon metadata. Backstory is true: retired crane operator who learned the system.
 - One way door acknowledged: the character and the personal brand are the same face.
+
+- Hair locked (Boss, 2026-09-02): low haircut, super deep detailed waves, super dark, crispy perfectly shaped line up. Twists frames are QA-only history, not the look. Shoot day is line-up day.
