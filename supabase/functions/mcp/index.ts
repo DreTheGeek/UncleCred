@@ -49,22 +49,41 @@ const TOOLS: ToolDef[] = [
       properties: {
         query: { type: "string", description: "What to look up, in plain language." },
         limit: { type: "number", description: "How many passages, 1 to 20. Default 5." },
+        topics: {
+          type: "array",
+          items: { type: "string" },
+          description:
+            "Optional topic filter: credit-fundamentals, credit-repair-diy, dispute-rounds, credit-cards-strategy, personal-funding, business-funding, case-monitoring-legal.",
+        },
       },
       required: ["query"],
     },
-    run: async (args) => {
+    run: async (args, principal) => {
       const query = str(args.query).trim();
       if (!query) throw new Error("query is required");
       const limit = num(args.limit, 5, 20);
+      const topics = Array.isArray(args.topics)
+        ? (args.topics as unknown[]).filter((t): t is string => typeof t === "string")
+        : null;
+
+      // Same gte-small session that wrote the column, so the vectors are comparable.
       const vector = await model.run(query, { mean_pool: true, normalize: true });
+
+      // Go through knowledge.match_chunks rather than a raw vector scan. Raw cosine treats an
+      // internal dispute-team checklist as equal to a lesson written for a viewer; match_chunks
+      // fuses vector with full text, weights by source authority, and drops superseded documents.
       const rows = await sql`
-        select c.id::text, c.content, c.heading_path, d.title as document_title,
-               round((1 - (c.embedding <=> ${JSON.stringify(vector)}::extensions.vector(384)))::numeric, 4) as similarity
-        from knowledge.document_chunks c
-        join knowledge.documents d on d.id = c.document_id
-        where c.embedding is not null
-        order by c.embedding <=> ${JSON.stringify(vector)}::extensions.vector(384)
-        limit ${limit}
+        select chunk_id::text, document_id::text, document_title, topic, authority,
+               heading_path, content, similarity, text_rank, score
+        from knowledge.match_chunks(
+          ${principal.organizationId}::uuid,
+          ${JSON.stringify(vector)}::extensions.vector(384),
+          ${query},
+          ${limit},
+          0.0,
+          ${topics},
+          null
+        )
       `;
       return { query, matches: rows };
     },
