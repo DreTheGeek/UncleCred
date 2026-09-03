@@ -11,10 +11,10 @@ The studio knows every character and knows the end of the story before it writes
 - Showrunner constitution (intelligence.showrunner_constitutions) holds the rules the writers room cannot break: tone, the click law of the show (every episode teaches one thing and moves one relationship), the ending.
 
 ## Season one, proposed (Boss approves in onboarding step 6)
-- Premise: Uncle Cred runs a small office in the Financial District. People come in denied. He fixes what they got wrong, one lesson at a time, while his own past with Mr. Denied hangs over him.
+- Premise: Uncle Cred is LaSean, 27, a retired crane operator who runs a small office in the Financial District. People come in denied. He fixes what they got wrong, one lesson at a time, while his own past with Mr. Denied hangs over him.
 - Midpoint: Repo Reggie, who has lost everything twice, gets approved for the first time and nearly blows it.
 - Ending: Funding Frank funds Reggie's business. Mr. Denied stamps APPROVED for the first time in the series, on Uncle Cred himself. Auntie APR gets the last word.
-- Character arcs: Cred (the teacher who has to face his own file), APR (the voice of restraint who learns when to let people take risk), Reggie (from repossessed to funded), Denied (the antagonist who is really the system, and the system can be beaten by paperwork), Frank (the door at the end of the hallway).
+- Character arcs: Cred (the young OG who learned it the hard way and has to face his own file), APR (the voice of restraint who learns when to let people take risk), Reggie (from repossessed to funded), Denied (the antagonist who is really the system, and the system can be beaten by paperwork), Frank (the door at the end of the hallway).
 
 ## Law
 - Every episode teaches exactly one credit truth verified against the knowledge base, and moves exactly one relationship.

@@ -50,3 +50,11 @@ Boss's whole job in this software is click, click, click, output. Nothing he tou
 - Identity pipeline, in order, nothing skipped: Face Master 001 (one photoreal casting portrait Boss points at) -> reference pack of 30 to 60 same-photoshoot images (front, 3/4s, profiles, full body, sitting, expressions, talking mouth positions, lighting variations) -> LoRA UC_LORA_V1 with trigger token UNCLECRED_V1 -> reference conditioned generation (LoRA + canonical ref + locked spec + wardrobe ref + scene ref) -> approved keyframe -> image to video -> identity QA. Never text to video for a character shot.
 - The board itself is direction, not a training source. The board has minor facial variation between panels; training on it would bake inconsistency in.
 - Tables this implies (Claude Code, Phase 02): character_versions, character_traits, character_references, character_loras, character_wardrobes, character_accessories, character_voices, character_generation_recipes, character_expressions, character_qa_profiles, character_relationships. Extend studio.visual_characters rather than replace it; the current jsonb fields are the interim.
+
+## Uncle Cred identity v2.0 (Boss, 2026-09-02): Uncle Cred is LaSean
+- Uncle Cred is LaSean Pickens, real, 27, playing himself. Not aged, not stylized. "Unc" is the OG who knows the game, not a birth year.
+- Supersedes v1.0's synthetic identity. The board stays for wardrobe, palette, and office direction only. Both generated candidate rounds rejected.
+- Production model: real lead in a generated world. Hero closeups can be LaSean on camera (zero generation cost) or generated from UNCLECRED_V1 trained on his real photos. Supporting cast, locations, b-roll, and stakes scenes are generated.
+- Face Master 001 is a photograph from the reference shoot. LoRA trains on real photos only. Identity QA compares to the real man at 0.95.
+- Likeness and voice consent recorded in canon metadata. Backstory is true: retired crane operator who learned the system.
+- One way door acknowledged: the character and the personal brand are the same face.
