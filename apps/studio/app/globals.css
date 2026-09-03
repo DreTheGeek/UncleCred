@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens lifted verbatim from apps/studio-mockups. The mockups are the spec. */
+:root {
+  --bg: #0a0d12;
+  --panel: #111620;
+  --panel2: #0e131b;
+  --line: #1e2530;
+  --txt: #e7eaee;
+  --dim: #7f8895;
+  --accent: #2563eb;
+  --cred: #e0a83a;
+  --green: #33d17a;
+  --red: #f4574f;
+  --amber: #e0a83a;
+  --blue: #4da3ff;
+  --font-sans: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --font-disp: "Bebas Neue", Impact, sans-serif;
+}
+
+[data-mode="day"] {
+  --bg: #eef0f3;
+  --panel: #fff;
+  --panel2: #f6f7f9;
+  --line: #e2e5ea;
+  --txt: #1a1d22;
+  --dim: #69707c;
+  --accent: #1d4ed8;
+  --cred: #b07d1e;
+  --green: #1d9c5b;
+  --red: #d23b34;
+  --amber: #b07d1e;
+  --blue: #256fcc;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.disp {
+  font-family: var(--font-disp);
+  letter-spacing: 0.02em;
+}
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Focus ring that survives both modes. Keyboard users are not an afterthought. */
+:where(a, button, input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
