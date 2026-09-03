@@ -28,6 +28,7 @@ See DECISIONS.md. Nothing there is reopened without Boss saying so.
 - Build board: apps/build-board/index.html. Updated at the end of every session.
 
 ## Sessions log
+- 2026-09-03 Claude Code: UNCLECRED_V3 trained on the 28 image 1024px set (event 75). v1 kept at metadata.lora_history, its face master at canon/uncle_cred/face_master_001_v1.jpg, and reference_assets.superseded records why. v3 face master and full reference set uploaded with a per file sha256 manifest so the QA gate has verifiable ground truth (event 74). train-lora now preserves LoRA history on every retrain.
 - 2026-09-03 chat: LoRA UNCLECRED_V1 trained (event 10). Buckets, 7 cron jobs, 436 owner policies, embed workers deployed via Composio. Embedding backfill running. CLI Supabase account still needs org access for Claude Code to deploy on its own.
 - 2026-09-02 chat: cast seeded (5 characters with canon, prohibited changes, relationships), ai_models seeded (16 rows), BENCHMARK-LAB.md written. Composio Vercel token invalid; Boss doing DNS by hand.
 - 2026-09-02 chat: credit KB imported from Credit Brothers (167 docs, 7,424 chunks), embeddings queued. ONBOARDING.md and STORY-BIBLE.md written.
