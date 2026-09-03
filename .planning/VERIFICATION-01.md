@@ -256,3 +256,61 @@ apps/studio. Git pushes still trigger a build from the repo root, which fails Ne
 detection ("No Next.js version detected") and leaves production untouched. Setting the
 project Root Directory to apps/studio makes git deploys use apps/studio/vercel.json and
 behave identically. There is no API for that setting; it is a dashboard field.
+
+## PHASE 01 GATE: COMPLETE (2026-09-03)
+
+Every gate item from phases/PHASES.md 01, with evidence.
+
+### Login on a live URL
+https://content.unclecred.app serving apps/studio. /login 200 and renders; /, /command-center
+and /review each 307 to /login?next=...; all five security headers present.
+
+### MCP answering
+supabase/functions/mcp deployed and answering JSON-RPC 2.0 on the uc_ API key:
+    initialize   200  serverInfo {"name":"unclecred-studio","version":"0.1.0"}  protocol 2024-11-05
+    tools/list   200  search_credit_knowledge, list_characters, get_character, studio_status, recent_events
+    bad key      401  refused before the body is parsed
+    studio_status            isError:false  characters 5, chunks_embedded 7424/7424, ledger 49
+    search_credit_knowledge  isError:false  sim 0.9250 on "The BEST Day to Pay Your Credit Card"
+    get_character            isError:false  Uncle Cred, lora UNCLECRED_V1, voice b2DJJJVITlSI2seQjLf5
+    recent_events            isError:false  mcp.tool.called rows landing in the ledger
+Bug found and fixed during verification: supabase-js rpc() is thenable but not a Promise, so
+the audit write's .catch() threw TypeError after every successful tool call and the handler
+reported isError:true on work that had actually succeeded.
+
+### One pipeline_stage claimed and completed by an edge function on cron
+    intake      completed  claimed_by pipeline-worker:proof01     (manual RPC round trip)
+    probe       completed  claimed_by pipeline-worker:a074aa53    (cron, deployed function)
+    transcribe  queued     worker_class speech, no worker exists yet
+    cron uc-pipeline-work, 15 seconds, succeeded
+    studio.pipeline_events 1 pipeline_created, 2 and 3 stage_completed
+The worker id on probe was generated inside the edge function, so that stage was claimed and
+completed autonomously, not by hand.
+
+### One object in Supabase Storage
+canon/uncle_cred/face_master_001.jpg and canon/uncle_cred/reference_set_v1.zip, both sha256
+verified, both recorded in studio.visual_characters.reference_assets.
+
+### Embeddings
+7,424 of 7,424. count(embedding) = count(*). Zero nulls, all gte-small/384, all stamped.
+
+### pg_cron
+10 jobs active. 3,751+ runs, zero failures.
+
+### RLS
+151 tables, RLS on all, 463 policies of which 436 are owner_*, gated on platform.is_org_member().
+
+## Retrieval layer applied
+knowledge.match_chunks(uuid, vector(384), text, int, float8, text[], text[]) is live.
+Hybrid vector + full text via reciprocal rank fusion, authority weighted, superseded
+documents excluded. Verified live: for "when should I pay my credit card to lower
+utilization" the top hits are sim 0.9250 / 0.9247 / 0.9185 with both the vector and the
+text halves scoring non zero on the same rows, correctly landing in credit-fundamentals.
+
+## Known gap carried into Phase 02
+The knowledge base is weighted toward internal operations SOPs rather than viewer facing
+credit education: Phase_1_R1_Disputes_Ideal_Full (377 chunks), BDCR_Full_Operational_Process
+(330), 03_Damage_Assessment_Reference_v7 (136). Layer split is 5,322 lesson to 2,102 source.
+Grounding will pass on SOP text that Uncle Cred cannot teach from. Either curate, or
+downgrade authority on the SOP documents; match_chunks already weights by authority
+(canonical 1.30 down to unverified 0.50), so a downgrade is sufficient.
