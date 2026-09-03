@@ -40,7 +40,17 @@ console.log("lora", loraUrl);
 
 // Merge, never overwrite: read-modify-write on the jsonb so voice, consent, identity_version survive.
 const lora = { id: trigger, url: loraUrl, trainer: "fal-ai/flux-lora-fast-training", steps: 1000, images: files.length, trained_at: new Date().toISOString(), locked: true };
-const merged = { ...(row.metadata ?? {}), lora };
+
+// Retraining must never silently drop the LoRA it replaces. A v3 that turns out worse than v1
+// should be a rollback, not another training run, and that is only possible if the old artifact
+// is still addressable. The outgoing lora is appended to lora_history, never overwritten.
+const prior = row.metadata?.lora ?? null;
+const priorHistory = Array.isArray(row.metadata?.lora_history) ? row.metadata.lora_history : [];
+const lora_history = prior && prior.url !== loraUrl
+  ? [...priorHistory, { ...prior, superseded_at: lora.trained_at, superseded_by: trigger }]
+  : priorHistory;
+
+const merged = { ...(row.metadata ?? {}), lora, lora_history };
 const { data: updated, error: updErr } = await sb.schema("studio").from("visual_characters").update({ metadata: merged }).eq("id", row.id).select("id, character_code, metadata->lora");
 if (updErr) throw updErr;
 if (!updated || updated.length !== 1) throw new Error(`expected 1 row updated, got ${updated?.length ?? 0}`);
