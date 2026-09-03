@@ -1,10 +1,14 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { READY_FOR_LASEAN } from "@/lib/constants";
+import { readState } from "./(studio)/onboarding/actions";
 
-// The click law: home is the Review Room when anything is waiting on Boss,
-// the Command Center otherwise. He never picks.
+// The click law: home is the Review Room when anything is waiting on Boss, the Command Center
+// otherwise. He never picks. Before either of those exists for him, home is onboarding.
 export default async function Home() {
+  const onboarding = await readState();
+  if (!onboarding.completed) redirect("/onboarding");
+
   const supabase = await createClient();
   const { count, error } = await supabase
     .schema("studio")

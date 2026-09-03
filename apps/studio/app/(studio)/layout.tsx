@@ -12,6 +12,7 @@ const NAV: Array<{ group: string; items: Array<{ label: string; href?: string }>
     items: [
       { label: "Command Center", href: "/command-center" },
       { label: "Review Room", href: "/review" },
+      { label: "Setup", href: "/onboarding" },
     ],
   },
   {
