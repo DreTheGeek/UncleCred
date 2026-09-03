@@ -7,3 +7,5 @@ refs/
 .vercel/
 .DS_Store
 supabase/.temp/
+.next/
+out/
