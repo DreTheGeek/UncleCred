@@ -120,3 +120,107 @@ uc-embed-backfill is erroring on WORKER_RESOURCE_LIMIT rather than succeeding.
 - No login exists. platform.organization_members has no row for a Boss auth user, so the
   owner_* policies would return zero rows to a real session even once one is created.
 - Remote MCP is still not ported from laseanpickens kaldr-mcp.
+
+## Phase 01 gate items closed (Claude Code, 2026-09-03)
+
+### CLOSED: embedding backfill, gate count(embedding) = count(*)
+Measured directly against knowledge.document_chunks:
+    count(*)                7424
+    count(embedding)        7424
+    embedding IS NULL          0
+    embedding_dimensions <> 384    0
+    embedding_model <> gte-small   0
+    embedded_at IS NULL            0
+Gate MET. 38 knowledge.embedded rows in the ledger. Every vector came from the same
+gte-small model that the column was sized for, so nothing in the table is a different
+embedding space from anything else.
+
+Rate history, for whoever tunes the cron later: 366 at 02:58, 573 at 03:29 (6.5/min),
+2151 at 04:35 (24.1/min over that segment), 7424 complete. The slow early window is real
+and worth understanding before the next large ingest, but it resolved on its own.
+
+### CLOSED: proof object in Supabase Storage
+    canon/uncle_cred/face_master_001.jpg     197,449 bytes  sha256 4774ea1f3581c96c6d72643da2e88a25d2892a1d0a50516f868b35e7ae118f43
+    canon/uncle_cred/reference_set_v1.zip  7,118,838 bytes  sha256 c38b7bd740764ead35c93af45b411e4596b9e13d43634d69b29810332fe32694
+Both recorded in canon and verified through the accessors the ruling asked for:
+    reference_assets->>'face_master'    canon/uncle_cred/face_master_001.jpg
+    reference_assets->>'reference_set'  canon/uncle_cred/reference_set_v1.zip
+Ledger event 16, canon.reference_set.stored.
+
+Shape change on record: reference_assets was a 7 element ARRAY holding curation history
+(two rejected candidate rounds, the Boss photo keep and exclude lists including
+excluded_minor_in_frame, and the twists versus low cut ruling). The ->> accessors require
+an object, so the column is now an object and the original array is preserved verbatim at
+reference_assets.history. Anything that expected an array must read .history.
+
+Operational note: supabase-js failed the 7MB zip upload with a bare "fetch failed". The
+direct storage REST POST with the same key succeeded first attempt. Use REST for large
+objects.
+
+### BLOCKED: one pipeline_stage claimed and completed
+Stage code chosen for the proof: intake, worker_class media. It is stage 1 of the 14 that
+system.start_media_assembly_line lays down, the only one created queued (the rest are
+blocked behind depends_on_stage_code), and studio.stage_gate_policies is empty so
+complete_pipeline_stage cannot raise the quality gate exception.
+
+The seed cannot run. See the schema defect section below. studio.assets row
+8dabdd79-9d7c-4967-9c55-f4b292797bf8 (asset_type reference_image, pointing at the canon
+face master) is already inserted and waiting; start_media_assembly_line is idempotent on
+re-run, so the seed is a single call once the defect is fixed.
+
+### DEFECT FOUND: four event tables have no identity on id
+studio.pipeline_events, studio.content_lifecycle_events, system.automation_events and
+system.workflow_events all declare "id bigint not null" with no default and no identity.
+Every insert fails 23502. The port from laseanpickens dropped the identity clause;
+system.system_events was written fresh in 202609020010 and is unaffected.
+
+Impact is not one call site. system.start_media_assembly_line, system.complete_pipeline_stage
+and system.advance_media_assembly_lines all write studio.pipeline_events, so the media
+assembly line cannot be started, advanced, or completed. This is why the Phase 01 pipeline
+gate cannot be reached, independent of whether pipeline-worker is deployed.
+
+Fix written as supabase/migrations/202609030000_fix_event_table_identity.sql. All four
+tables verified empty first, so an identity starting at 1 cannot collide. Needs the
+Composio path; no control plane access here.
+
+### WRITTEN, NOT DEPLOYED: remote MCP
+supabase/functions/mcp/index.ts. JSON-RPC 2.0 over POST, authenticated with the same uc_
+API key as the REST API per API-STANDARD, so there is no second auth system. Deliberately
+not a port of laseanpickens kaldr-mcp, which brings its own OAuth tables that UncleCred
+does not need.
+
+Five tools: search_credit_knowledge (Supabase.ai gte-small embeds the query, pgvector
+cosine over the 7,424 embedded chunks, same model that wrote the column), list_characters,
+get_character, studio_status, recent_events. Every tools/call writes an mcp.tool.called
+ledger row. Unauthenticated requests are refused before the body is parsed and the key is
+never echoed or logged.
+
+### WRITTEN AND VERIFIED, NOT DEPLOYED: apps/studio
+Next 15 App Router, TypeScript strict, Tailwind, @supabase/ssr. Tokens and shell taken from
+apps/studio-mockups; the mockups were not shipped as the app.
+
+    tsc --noEmit   exit 0
+    next build     exit 0, six routes, middleware 93kB
+    npm audit      0 vulnerabilities (postcss forced to 8.5.26 across the tree; next pins
+                   8.4.31 internally, which carries a high advisory)
+    em dashes      0
+
+Login is one email box and one button, no password field and no signup page. getUser
+everywhere, never getSession. Anon key only; the service role key never enters the bundle.
+Home routes to /review when episodes are waiting and /command-center otherwise. Three
+one-tap decisions, each writing the episode row and one ledger event.
+
+Two findings recorded in code rather than guessed at:
+1. There is no READY_FOR_LASEAN value. platform.work_status is idea, research, ready,
+   scheduled, in_progress, blocked, review, approved, completed, published, archived,
+   killed. The app maps to "review", the enum value meaning awaiting a human, matching
+   pipeline stage 12 named human_review. One constant in lib/constants.ts. The alternative
+   is studio.episodes.production_state, free text, default "insight".
+2. A valid session with no platform.organization_members row reads zero rows from every
+   table, which is indistinguishable from an empty studio. There is a dedicated empty state
+   saying RLS is working and onboarding step 1 creates the row, so first login does not
+   look like a broken app.
+
+Blocked on NEXT_PUBLIC_SUPABASE_ANON_KEY, which is not obtainable without control plane
+access. That also blocks attaching content.unclecred.app, whose DNS already resolves to
+Vercel but which no project currently claims.
