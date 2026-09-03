@@ -224,3 +224,35 @@ Two findings recorded in code rather than guessed at:
 Blocked on NEXT_PUBLIC_SUPABASE_ANON_KEY, which is not obtainable without control plane
 access. That also blocks attaching content.unclecred.app, whose DNS already resolves to
 Vercel but which no project currently claims.
+
+## CLOSED: live URL, studio deployed (2026-09-03)
+
+https://content.unclecred.app is serving apps/studio. Verified from outside:
+
+    /login            200, <title>Uncle Cred Studio</title>, form renders
+    /                 307 -> /login?next=%2F
+    /command-center   307 -> /login?next=%2Fcommand-center
+    /review           307 -> /login?next=%2Freview
+    all five security headers present (CSP, X-Frame-Options DENY, X-Content-Type-Options,
+    Referrer-Policy, Permissions-Policy)
+
+Before this, the same domain served apps/studio-mockups. Proof it was the mockups and not
+the app: /01-command-center and /02-review-room returned 200 while /login, /review and
+/command-center returned 404, and every number on that screen was hardcoded HTML against a
+database holding 0 episodes, 0 pipeline_runs, 0 pipeline_stages, 0 clips, 0 platform_posts.
+
+Three defects had to be cleared to get here:
+1. Root vercel.json had framework null, an empty buildCommand and outputDirectory
+   apps/studio-mockups. The production build finished in 31ms having built nothing.
+2. The project's stored Output Directory setting also pointed at apps/studio-mockups, so
+   the deploy failed after a successful Next build. apps/studio/vercel.json overrides it.
+3. NEXT_PUBLIC_ values are not visible to the build on this project, so the inlined
+   constants were undefined and middleware threw MIDDLEWARE_INVOCATION_FAILED on every
+   route. lib/supabase/env.ts now resolves from any provisioned spelling at runtime, and
+   the layout hands the browser its config as application/json.
+
+Deployment path caveat: production is currently updated by `vercel deploy --prod` from
+apps/studio. Git pushes still trigger a build from the repo root, which fails Next
+detection ("No Next.js version detected") and leaves production untouched. Setting the
+project Root Directory to apps/studio makes git deploys use apps/studio/vercel.json and
+behave identically. There is no API for that setting; it is a dashboard field.
