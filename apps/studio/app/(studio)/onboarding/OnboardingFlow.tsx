@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { saveState, saveProductName, acknowledgeRules } from "./actions";
+import { saveState, saveProductName, acknowledgeRules, pickFace } from "./actions";
 import type { OnboardingState } from "./state";
 
 // The nine steps from ONBOARDING.md. Every step is a tap or a picker; the only text field in
@@ -12,6 +12,8 @@ import type { OnboardingState } from "./state";
 // fill them, and they let Boss move on. A flow that blocks on a thing that does not exist is
 // worse than one that is honest about where the build actually is.
 
+export type FaceCandidate = { slot: number; url: string | null; status: string };
+
 export type CastMember = {
   code: string;
   name: string;
@@ -20,6 +22,8 @@ export type CastMember = {
   prohibited: string[];
   loraId: string | null;
   voiceId: string | null;
+  faceMaster: string | null;
+  candidates: FaceCandidate[];
 };
 
 export type StudioFacts = {
@@ -93,6 +97,15 @@ export function OnboardingFlow({
       const res = await acknowledgeRules();
       if (!res.ok) return setError(res.error ?? "That did not save.");
       setState((s) => ({ ...s, rulesAcknowledged: true, step: 9 }));
+      router.refresh();
+    });
+  }
+
+  function choose(code: string, slot: number) {
+    setError("");
+    startTransition(async () => {
+      const res = await pickFace(code, slot);
+      if (!res.ok) return setError(res.error ?? "That pick did not save.");
       router.refresh();
     });
   }
@@ -225,22 +238,79 @@ export function OnboardingFlow({
         {step === 4 ? (
           <Step title="THE LOOK">
             <P>
-              A locked face per character. Uncle Cred is done: trained on your reference shoot and
-              locked into canon, so every shot of him comes from the same identity.
+              A locked face per character. Uncle Cred is trained from your real reference shoot.
+              For the rest, the studio generated candidates from what canon already says about
+              them. Tap the one that is them.
             </P>
-            <Facts
-              rows={[
-                ["Uncle Cred", uc?.loraId ? `LoRA ${uc.loraId} locked` : "not trained"],
-                [
-                  "The other four",
-                  `${cast.filter((c) => !c.loraId).length} characters still need a face`,
-                ],
-              ]}
-            />
-            <NotBuilt
-              what="Candidate generation for the other four"
-              needs="The generation router is live and proven on Uncle Cred. Generating and picking faces for Auntie APR, Repo Reggie, Mr. Denied and Funding Frank is the next piece of Phase 02."
-            />
+            <div className="mt-4 grid gap-4">
+              {cast.map((c) => {
+                if (c.loraId) {
+                  return (
+                    <div key={c.code} className="rounded-lg border border-ok/50 bg-panel2 px-3.5 py-3">
+                      <div className="flex items-center justify-between">
+                        <span className="disp text-[17px]">{c.name}</span>
+                        <span className="mono text-[10px] text-ok">LOCKED</span>
+                      </div>
+                      <div className="mono mt-1 text-[10.5px] text-dim">
+                        LoRA {c.loraId} · trained on the real reference shoot
+                      </div>
+                    </div>
+                  );
+                }
+                const picked = c.candidates.find((x) => x.status === "chosen");
+                return (
+                  <div key={c.code} className="rounded-lg border border-line bg-panel2 px-3.5 py-3">
+                    <div className="flex items-center justify-between">
+                      <span className="disp text-[17px]">{c.name}</span>
+                      <span className={`mono text-[10px] ${picked ? "text-ok" : "text-dim"}`}>
+                        {picked ? "FACE PICKED" : "TAP THE ONE THAT IS THEM"}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-[12px] text-dim">{c.description}</div>
+                    {c.candidates.length === 0 ? (
+                      <div className="mono mt-2 text-[10.5px] text-warn">
+                        NO CANDIDATES GENERATED YET
+                      </div>
+                    ) : (
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        {c.candidates.map((cand) => {
+                          const on = cand.status === "chosen";
+                          return (
+                            <button
+                              key={cand.slot}
+                              type="button"
+                              disabled={pending || !cand.url}
+                              onClick={() => choose(c.code, cand.slot)}
+                              aria-label={`Pick candidate ${cand.slot} for ${c.name}`}
+                              className={`overflow-hidden rounded-lg border transition-colors ${
+                                on ? "border-ok shadow-[0_0_0_1px_var(--green)]" : "border-line hover:border-accent"
+                              } ${!on && picked ? "opacity-45" : ""}`}
+                            >
+                              {cand.url ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={cand.url}
+                                  alt={`${c.name}, candidate ${cand.slot}`}
+                                  className="aspect-[3/4] w-full object-cover"
+                                />
+                              ) : (
+                                <div className="mono grid aspect-[3/4] w-full place-items-center text-[10px] text-dim">
+                                  NO PREVIEW
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <P dim>
+              A pick becomes the canonical front reference. The turnaround, the expression sheets
+              and the LoRA all derive from it, so the ones you turn down are kept, not deleted.
+            </P>
             <Primary onClick={() => go({ step: 5 })} pending={pending}>
               Continue
             </Primary>

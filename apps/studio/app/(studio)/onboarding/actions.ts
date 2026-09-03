@@ -131,3 +131,72 @@ export async function acknowledgeRules(): Promise<{ ok: boolean; error?: string 
   });
   return { ok: true };
 }
+
+/**
+ * Step 4. Boss taps the candidate that is them; that image becomes the canonical front
+ * reference the turnaround, expression sheets and LoRA all derive from.
+ *
+ * The picked candidate is marked chosen and the rest rejected rather than deleted. DECISIONS
+ * keeps both rejected identity rounds on the Uncle Cred row for exactly this reason: knowing
+ * what was turned down is how you avoid regenerating it.
+ */
+export async function pickFace(
+  characterCode: string,
+  slot: number,
+): Promise<{ ok: boolean; error?: string }> {
+  const supabase = await createClient();
+  const { data: row, error: readErr } = await supabase
+    .schema("studio")
+    .from("visual_characters")
+    .select("id, name, reference_assets")
+    .eq("character_code", characterCode)
+    .single();
+  if (readErr || !row) return { ok: false, error: "That character is not in canon." };
+
+  const ra = row.reference_assets as Record<string, unknown>;
+  const candidates = Array.isArray(ra?.face_candidates)
+    ? (ra.face_candidates as Array<Record<string, unknown>>)
+    : [];
+  const chosen = candidates.find((c) => Number(c.slot) === slot);
+  if (!chosen) return { ok: false, error: "That candidate is no longer there. Reload." };
+
+  const next = {
+    ...ra,
+    face_master: chosen.path,
+    face_master_sha256: chosen.sha256 ?? null,
+    face_master_picked_at: new Date().toISOString(),
+    face_candidates: candidates.map((c) => ({
+      ...c,
+      status: Number(c.slot) === slot ? "chosen" : "rejected",
+    })),
+  };
+
+  const { data: upd, error: updErr } = await supabase
+    .schema("studio")
+    .from("visual_characters")
+    .update({ reference_assets: next })
+    .eq("id", row.id)
+    .select("id");
+  if (updErr) {
+    console.error("pickFace write failed:", updErr.message);
+    return { ok: false, error: "Could not save that pick." };
+  }
+  if (!updated1(upd)) return { ok: false, error: "Nothing saved. Check your access." };
+
+  const { data: { user } } = await supabase.auth.getUser();
+  await supabase.schema("system").rpc("emit_event", {
+    p_org: ORG_ID,
+    p_type: "canon.face_master.picked",
+    p_table: "studio.visual_characters",
+    p_id: row.id,
+    p_payload: { character_code: characterCode, slot, path: chosen.path },
+    p_actor: user?.email ?? "owner",
+  });
+
+  revalidatePath("/onboarding");
+  return { ok: true };
+}
+
+function updated1(rows: unknown): boolean {
+  return Array.isArray(rows) && rows.length === 1;
+}
