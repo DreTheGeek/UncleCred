@@ -10,6 +10,7 @@
     "@fal-ai/client": "^1",
     "@supabase/supabase-js": "^2",
     "jszip": "^3",
-    "postgres": "^3"
+    "postgres": "^3",
+    "zod": "^4.5.4"
   }
 }

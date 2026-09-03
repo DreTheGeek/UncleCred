@@ -12,3 +12,4 @@ out/
 
 .vercel
 *.tsbuildinfo
+refs/uncle_cred/generated/
