@@ -35,3 +35,11 @@ Evidence, not claims. Project pdficpdfrituqjzaleen (Supabase, us-west-2, Postgre
 - Trigger knowledge.enqueue_chunk_embedding fired: pgmq dre_embeddings depth 7,724. Embeddings are 0 of 7,424 until the embed worker edge function is deployed with an embedding key (Claude Code Phase 01 step, add it).
 - Not imported yet: 1,728 untopic'd raw source docs (6,210 chunks, mixed subjects), 15 SOPs, the 8 non credit topics (travel, bank bonuses, team ops). BigBuildsAi corpus (13 kb_* pairs) left in place; the kb skills already in kaldr-core cover the same ground.
 - Ledger: system_events knowledge.imported.
+
+## Control plane pass (2026-09-03, through Composio, since the CLI account is outside the studio org)
+- Storage buckets created: canon (private), renders (private), finals (public).
+- pg_cron registered: uc-autonomy-sweep (1m), uc-pipeline-advance (1m), uc-content-learning (1m), uc-media-recovery (5m), uc-pipeline-recovery (5m), uc-embed-backfill (8s, limit 4), uc-embed-queue (30s, limit 3).
+- Owner RLS: 436 owner_select / owner_insert / owner_update policies on every table with organization_id, gated on platform.is_org_member(). A platform.organization_members row for Boss's auth user is still needed and is created at onboarding step 1.
+- Edge functions deployed: embed-worker and process-embedding-queue (ported from laseanpickens, knowledge schema, gte-small 384 dims, no external key, guarded by x-worker-secret, verify_jwt off).
+- Finding: edge CPU budget caps the sweep at about 4 chunks per invocation (limit 8 hits WORKER_RESOURCE_LIMIT). Cron alone would take about a day. Backfill is therefore also being run out of band with the identical model (thenlper/gte-small, cosine 1.000 against an edge produced vector), writing vectors in batches of 120 from the opposite end of the table so the two do not collide. The cron jobs stay as the steady state.
+- Ledger: knowledge.embedded events from the worker, ids 11 and 12 at time of writing.
