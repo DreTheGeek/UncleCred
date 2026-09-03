@@ -9,3 +9,5 @@ refs/
 supabase/.temp/
 .next/
 out/
+
+.vercel
