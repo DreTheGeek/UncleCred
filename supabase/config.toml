@@ -9,3 +9,6 @@ major_version = 17
 
 [functions.api-v1]
 verify_jwt = false
+
+[functions.scene-provider-gateway]
+verify_jwt = false
