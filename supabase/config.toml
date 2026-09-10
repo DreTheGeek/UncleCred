@@ -1,7 +1,7 @@
 project_id = "pdficpdfrituqjzaleen"
 
 [api]
-schemas = ["public", "platform", "studio", "production", "publishing", "intelligence", "research", "knowledge", "system"]
+schemas = ["public", "platform", "story", "studio", "production", "publishing", "intelligence", "research", "knowledge", "system"]
 extra_search_path = ["public", "extensions"]
 
 [db]
