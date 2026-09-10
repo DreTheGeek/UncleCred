@@ -1,19 +1,15 @@
-// Scene provider gateway. Keeps provider secrets inside Supabase runtime.
-// Explicitly authenticates either a Supabase user JWT or a valid platform API key.
+// Scene provider gateway. Provider credentials stay inside Supabase runtime.
+// Authenticates a target-Supabase user JWT or shared platform API key.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { admin, fail, ok, principalFrom, type Principal } from "../_shared/api.ts";
+import { sceneOpenRouterCompletion, type SceneProviderMessage } from "../_shared/scene-provider.ts";
 
 type Json = Record<string, unknown>;
-
-type CompletionMessage = {
-  role: "system" | "user" | "assistant";
-  content: string;
-};
 
 type CompletionRequest = {
   task: "showrunner.initial_blueprint";
   organization_id: string;
-  messages: CompletionMessage[];
+  messages: SceneProviderMessage[];
   temperature?: number;
   max_tokens?: number;
   response_format?: Json;
@@ -21,12 +17,6 @@ type CompletionRequest = {
 
 function stringValue(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
-}
-
-function safeNumber(value: unknown, fallback: number, min: number, max: number): number {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return fallback;
-  return Math.max(min, Math.min(max, n));
 }
 
 async function canUseOrganization(principal: Principal, organizationId: string): Promise<boolean> {
@@ -48,50 +38,6 @@ async function canUseOrganization(principal: Principal, organizationId: string):
   return !error && Boolean(data);
 }
 
-function storyModel(): string {
-  return Deno.env.get("SCENE_STORY_MODEL")?.trim() || "openrouter/auto";
-}
-
-async function openRouterCompletion(input: CompletionRequest) {
-  const apiKey = Deno.env.get("OPENROUTER_API_KEY")?.trim();
-  if (!apiKey) throw new Error("provider_secret_missing:OPENROUTER_API_KEY");
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      "content-type": "application/json",
-      "x-openrouter-title": "Scene",
-    },
-    body: JSON.stringify({
-      model: storyModel(),
-      messages: input.messages,
-      temperature: safeNumber(input.temperature, 0.55, 0, 1.5),
-      max_tokens: Math.floor(safeNumber(input.max_tokens, 12000, 256, 16000)),
-      ...(input.response_format ? { response_format: input.response_format } : {}),
-    }),
-  });
-
-  if (!response.ok) {
-    const body = await response.text().catch(() => "");
-    throw new Error(`openrouter_request_failed:${response.status}:${body.slice(0, 300)}`);
-  }
-
-  const payload = await response.json() as Json;
-  const choices = Array.isArray(payload.choices) ? payload.choices as Json[] : [];
-  const message = choices[0]?.message as Json | undefined;
-  const content = stringValue(message?.content);
-  if (!content) throw new Error("openrouter_empty_response");
-
-  return {
-    provider: "openrouter",
-    model: stringValue(payload.model) || storyModel(),
-    provider_request_id: stringValue(payload.id) || null,
-    content,
-    usage: payload.usage ?? null,
-  };
-}
-
 async function emitAudit(principal: Principal, organizationId: string, task: string, startedAt: number, success: boolean) {
   try {
     await admin().schema("system").rpc("emit_event", {
@@ -108,7 +54,7 @@ async function emitAudit(principal: Principal, organizationId: string, task: str
       p_actor: "scene-provider-gateway",
     });
   } catch {
-    // Provider execution must not be failed solely by an audit-write problem.
+    // Provider execution must not fail solely because audit recording failed.
   }
 }
 
@@ -131,18 +77,25 @@ Deno.serve(async (req: Request) => {
   if (!(await canUseOrganization(principal, organizationId))) {
     return fail("forbidden", "Principal cannot use providers for this organization", 403);
   }
-
   if (body.task !== "showrunner.initial_blueprint") {
     return fail("unsupported_task", "Unsupported provider task", 400);
   }
-  if (!Array.isArray(body.messages) || body.messages.length < 1 || body.messages.length > 20) {
-    return fail("invalid_messages", "messages must contain 1 to 20 items", 400);
-  }
 
   try {
-    const result = await openRouterCompletion(body);
+    const result = await sceneOpenRouterCompletion({
+      messages: body.messages,
+      temperature: body.temperature,
+      maxTokens: body.max_tokens,
+      responseFormat: body.response_format,
+    });
     await emitAudit(principal, organizationId, body.task, startedAt, true);
-    return ok(result, 200, { task: body.task });
+    return ok({
+      provider: result.provider,
+      model: result.model,
+      provider_request_id: result.providerRequestId,
+      content: result.content,
+      usage: result.usage,
+    }, 200, { task: body.task });
   } catch (error) {
     await emitAudit(principal, organizationId, body.task, startedAt, false);
     const message = error instanceof Error ? error.message : String(error);
