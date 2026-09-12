@@ -15,3 +15,6 @@ verify_jwt = false
 
 [functions.scene-api]
 verify_jwt = false
+
+[functions.scene-generation-worker]
+verify_jwt = false
