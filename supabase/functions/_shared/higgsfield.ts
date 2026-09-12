@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const HIGGSFIELD_API_BASE = "https://api.higgsfield.ai";
+const HIGGSFIELD_API_BASE = "https://platform.higgsfield.ai";
 
 export type HiggsfieldRequestStatus =
   | "queued"
@@ -26,14 +26,15 @@ export type HiggsfieldSubmitResult = {
 };
 
 function credentials() {
-  // Official Higgsfield docs use HF_API_KEY_ID / HF_API_KEY_SECRET.
-  // Accept the longer aliases during migration so existing Supabase secrets do not have to be renamed immediately.
+  // Higgsfield uses a key id + secret pair. Accept the aliases already used in
+  // our Supabase environments so we can migrate without rotating credentials.
   const keyId = Deno.env.get("HF_API_KEY_ID")?.trim()
     || Deno.env.get("HIGGSFIELD_API_KEY_ID")?.trim();
-  const keySecret = Deno.env.get("HF_API_KEY_SECRET")?.trim()
+  const keySecret = Deno.env.get("HF_API_SECRET")?.trim()
+    || Deno.env.get("HF_API_KEY_SECRET")?.trim()
     || Deno.env.get("HIGGSFIELD_API_KEY_SECRET")?.trim();
   if (!keyId) throw new Error("provider_secret_missing:HF_API_KEY_ID");
-  if (!keySecret) throw new Error("provider_secret_missing:HF_API_KEY_SECRET");
+  if (!keySecret) throw new Error("provider_secret_missing:HF_API_SECRET");
   return { keyId, keySecret };
 }
 
