@@ -31,6 +31,16 @@ export type SceneGenerationRequirements = {
   retryBudgetCents?: number | null;
 };
 
+export type SceneGenerationRequest = {
+  requirements: SceneGenerationRequirements;
+  prompt: string;
+  referenceUrls?: string[];
+  lastFrameUrl?: string | null;
+  negativePrompt?: string | null;
+  seed?: number | null;
+  metadata?: Record<string, unknown>;
+};
+
 export type SceneProviderName = "higgsfield" | "fal" | "elevenlabs";
 
 export type SceneProviderRoute = {
@@ -80,6 +90,27 @@ export function validateGenerationRequirements(input: SceneGenerationRequirement
   }
   if ((input.task === "video" || input.task === "image_to_video") && input.targetDurationSeconds == null) {
     issues.push("video generation requires targetDurationSeconds");
+  }
+
+  return { valid: issues.length === 0, issues };
+}
+
+export function validateGenerationRequest(input: SceneGenerationRequest) {
+  const issues = [...validateGenerationRequirements(input.requirements).issues];
+  if (!input.prompt?.trim()) issues.push("prompt is required");
+
+  const referenceUrls = input.referenceUrls ?? [];
+  if (input.requirements.referenceCount != null && referenceUrls.length < input.requirements.referenceCount) {
+    issues.push("referenceUrls count is below requirements.referenceCount");
+  }
+  if (input.requirements.task === "image_to_video" && referenceUrls.length < 1) {
+    issues.push("image_to_video requires at least one reference URL");
+  }
+  if (input.lastFrameUrl && input.requirements.task !== "video" && input.requirements.task !== "image_to_video") {
+    issues.push("lastFrameUrl is only valid for video tasks");
+  }
+  if (input.seed != null && (!Number.isInteger(input.seed) || input.seed < 0)) {
+    issues.push("seed must be a nonnegative integer");
   }
 
   return { valid: issues.length === 0, issues };
