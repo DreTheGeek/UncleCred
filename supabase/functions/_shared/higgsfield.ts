@@ -4,6 +4,7 @@ const HIGGSFIELD_API_BASE = "https://platform.higgsfield.ai";
 
 export type HiggsfieldRequestStatus =
   | "queued"
+  | "in_progress"
   | "processing"
   | "completed"
   | "failed"
@@ -26,14 +27,27 @@ export type HiggsfieldSubmitResult = {
 };
 
 function credentials() {
-  // Higgsfield uses a key id + secret pair. Accept the aliases already used in
-  // our Supabase environments so we can migrate without rotating credentials.
-  const keyId = Deno.env.get("HF_API_KEY_ID")?.trim()
+  const combined = Deno.env.get("HF_CREDENTIALS")?.trim();
+  if (combined) {
+    const separator = combined.indexOf(":");
+    if (separator <= 0 || separator === combined.length - 1) {
+      throw new Error("provider_secret_invalid:HF_CREDENTIALS");
+    }
+    return {
+      keyId: combined.slice(0, separator).trim(),
+      keySecret: combined.slice(separator + 1).trim(),
+    };
+  }
+
+  // Official v2 names are HF_API_KEY + HF_API_SECRET. Keep existing aliases
+  // during migration so current Supabase secrets do not need an immediate rename.
+  const keyId = Deno.env.get("HF_API_KEY")?.trim()
+    || Deno.env.get("HF_API_KEY_ID")?.trim()
     || Deno.env.get("HIGGSFIELD_API_KEY_ID")?.trim();
   const keySecret = Deno.env.get("HF_API_SECRET")?.trim()
     || Deno.env.get("HF_API_KEY_SECRET")?.trim()
     || Deno.env.get("HIGGSFIELD_API_KEY_SECRET")?.trim();
-  if (!keyId) throw new Error("provider_secret_missing:HF_API_KEY_ID");
+  if (!keyId) throw new Error("provider_secret_missing:HF_API_KEY");
   if (!keySecret) throw new Error("provider_secret_missing:HF_API_SECRET");
   return { keyId, keySecret };
 }
@@ -41,6 +55,14 @@ function credentials() {
 function authHeader() {
   const { keyId, keySecret } = credentials();
   return `Key ${keyId}:${keySecret}`;
+}
+
+function providerHeaders(includeJson = false) {
+  return {
+    Authorization: authHeader(),
+    "User-Agent": "scene-higgsfield-server/1.0",
+    ...(includeJson ? { "Content-Type": "application/json" } : {}),
+  };
 }
 
 function normalizeModelEndpoint(endpoint: string) {
@@ -94,10 +116,7 @@ export function isHiggsfieldTerminalStatus(status: string) {
 export async function submitHiggsfieldGeneration(input: HiggsfieldSubmitInput): Promise<HiggsfieldSubmitResult> {
   const response = await fetch(normalizeModelEndpoint(input.endpoint), {
     method: "POST",
-    headers: {
-      Authorization: authHeader(),
-      "Content-Type": "application/json",
-    },
+    headers: providerHeaders(true),
     body: JSON.stringify(input.payload),
   });
 
@@ -123,7 +142,7 @@ export async function submitHiggsfieldGeneration(input: HiggsfieldSubmitInput): 
 
 export async function getHiggsfieldRequestStatus(requestId: string) {
   const response = await fetch(requestUrl(requestId, "status"), {
-    headers: { Authorization: authHeader() },
+    headers: providerHeaders(),
   });
   const raw = await parseJsonResponse(response, "higgsfield_status_failed");
   const status = nonEmptyString(raw.status);
@@ -139,7 +158,7 @@ export async function getHiggsfieldRequestStatus(requestId: string) {
 export async function cancelHiggsfieldRequest(requestId: string) {
   const response = await fetch(requestUrl(requestId, "cancel"), {
     method: "POST",
-    headers: { Authorization: authHeader() },
+    headers: providerHeaders(),
   });
 
   if (!response.ok) {
