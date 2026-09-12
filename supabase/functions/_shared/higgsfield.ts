@@ -7,7 +7,8 @@ export type HiggsfieldRequestStatus =
   | "processing"
   | "completed"
   | "failed"
-  | "cancelled"
+  | "nsfw"
+  | "canceled"
   | string;
 
 export type HiggsfieldSubmitInput = {
@@ -25,10 +26,14 @@ export type HiggsfieldSubmitResult = {
 };
 
 function credentials() {
-  const keyId = Deno.env.get("HIGGSFIELD_API_KEY_ID")?.trim();
-  const keySecret = Deno.env.get("HIGGSFIELD_API_KEY_SECRET")?.trim();
-  if (!keyId) throw new Error("provider_secret_missing:HIGGSFIELD_API_KEY_ID");
-  if (!keySecret) throw new Error("provider_secret_missing:HIGGSFIELD_API_KEY_SECRET");
+  // Official Higgsfield docs use HF_API_KEY_ID / HF_API_KEY_SECRET.
+  // Accept the longer aliases during migration so existing Supabase secrets do not have to be renamed immediately.
+  const keyId = Deno.env.get("HF_API_KEY_ID")?.trim()
+    || Deno.env.get("HIGGSFIELD_API_KEY_ID")?.trim();
+  const keySecret = Deno.env.get("HF_API_KEY_SECRET")?.trim()
+    || Deno.env.get("HIGGSFIELD_API_KEY_SECRET")?.trim();
+  if (!keyId) throw new Error("provider_secret_missing:HF_API_KEY_ID");
+  if (!keySecret) throw new Error("provider_secret_missing:HF_API_KEY_SECRET");
   return { keyId, keySecret };
 }
 
@@ -81,6 +86,10 @@ async function parseJsonResponse(response: Response, errorPrefix: string) {
   return body;
 }
 
+export function isHiggsfieldTerminalStatus(status: string) {
+  return status === "completed" || status === "failed" || status === "nsfw" || status === "canceled";
+}
+
 export async function submitHiggsfieldGeneration(input: HiggsfieldSubmitInput): Promise<HiggsfieldSubmitResult> {
   const response = await fetch(normalizeModelEndpoint(input.endpoint), {
     method: "POST",
@@ -116,10 +125,12 @@ export async function getHiggsfieldRequestStatus(requestId: string) {
     headers: { Authorization: authHeader() },
   });
   const raw = await parseJsonResponse(response, "higgsfield_status_failed");
+  const status = nonEmptyString(raw.status);
   return {
     provider: "higgsfield" as const,
     requestId,
-    status: nonEmptyString(raw.status),
+    status,
+    terminal: isHiggsfieldTerminalStatus(status),
     raw,
   };
 }
@@ -138,6 +149,6 @@ export async function cancelHiggsfieldRequest(requestId: string) {
   return {
     provider: "higgsfield" as const,
     requestId,
-    cancelled: true,
+    canceled: true,
   };
 }
